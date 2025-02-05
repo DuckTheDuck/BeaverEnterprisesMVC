@@ -21,7 +21,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // GET: Flights
         public async Task<IActionResult> Index()
         {
-            var beaverEnterprisesContext = _context.Flights.Include(f => f.IdAircraftNavigation).Include(f => f.IdDestinationNavigation).Include(f => f.IdOriginNavigation);
+            var beaverEnterprisesContext = _context.Flights.Include(f => f.IdAircraftNavigation).Include(f => f.IdClassNavigation).Include(f => f.IdDestinationNavigation).Include(f => f.IdOriginNavigation);
             return View(await beaverEnterprisesContext.ToListAsync());
         }
 
@@ -35,6 +35,7 @@ namespace BeaverEnterprisesMVC.Controllers
 
             var flight = await _context.Flights
                 .Include(f => f.IdAircraftNavigation)
+                .Include(f => f.IdClassNavigation)
                 .Include(f => f.IdDestinationNavigation)
                 .Include(f => f.IdOriginNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -50,6 +51,7 @@ namespace BeaverEnterprisesMVC.Controllers
         public IActionResult Create()
         {
             ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id");
+            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id");
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id");
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id");
             return View();
@@ -60,7 +62,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FlightNumber,IdOrigin,IdDestination,DepartureTime,ArrivalTime,IdAircraft,Periocity")] Flight flight)
+        public async Task<IActionResult> Create([Bind("Id,FlightNumber,IdOrigin,IdDestination,DepartureTime,ArrivalTime,IdAircraft,IdClass,Periocity")] Flight flight)
         {
             if (ModelState.IsValid)
             {
@@ -69,6 +71,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id", flight.IdAircraft);
+            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", flight.IdClass);
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id", flight.IdDestination);
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id", flight.IdOrigin);
             return View(flight);
@@ -88,6 +91,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
             ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id", flight.IdAircraft);
+            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", flight.IdClass);
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id", flight.IdDestination);
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id", flight.IdOrigin);
             return View(flight);
@@ -98,7 +102,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FlightNumber,IdOrigin,IdDestination,DepartureTime,ArrivalTime,IdAircraft,Periocity")] Flight flight)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FlightNumber,IdOrigin,IdDestination,DepartureTime,ArrivalTime,IdAircraft,IdClass,Periocity")] Flight flight)
         {
             if (id != flight.Id)
             {
@@ -126,6 +130,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id", flight.IdAircraft);
+            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", flight.IdClass);
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id", flight.IdDestination);
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id", flight.IdOrigin);
             return View(flight);
@@ -141,6 +146,7 @@ namespace BeaverEnterprisesMVC.Controllers
 
             var flight = await _context.Flights
                 .Include(f => f.IdAircraftNavigation)
+                .Include(f => f.IdClassNavigation)
                 .Include(f => f.IdDestinationNavigation)
                 .Include(f => f.IdOriginNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);

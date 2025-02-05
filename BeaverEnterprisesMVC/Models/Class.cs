@@ -15,5 +15,5 @@ public partial class Class
 
     public decimal Price { get; set; }
 
-    public virtual ICollection<Aircraft> Aircraft { get; set; } = new List<Aircraft>();
+    public virtual ICollection<Flight> Flights { get; set; } = new List<Flight>();
 }

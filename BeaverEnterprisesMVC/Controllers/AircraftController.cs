@@ -21,7 +21,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // GET: Aircraft
         public async Task<IActionResult> Index()
         {
-            var beaverEnterprisesContext = _context.Aircraft.Include(a => a.IdClassNavigation).Include(a => a.IdManufacturerNavigation);
+            var beaverEnterprisesContext = _context.Aircraft.Include(a => a.IdManufacturerNavigation);
             return View(await beaverEnterprisesContext.ToListAsync());
         }
 
@@ -34,7 +34,6 @@ namespace BeaverEnterprisesMVC.Controllers
             }
 
             var aircraft = await _context.Aircraft
-                .Include(a => a.IdClassNavigation)
                 .Include(a => a.IdManufacturerNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (aircraft == null)
@@ -48,7 +47,6 @@ namespace BeaverEnterprisesMVC.Controllers
         // GET: Aircraft/Create
         public IActionResult Create()
         {
-            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id");
             ViewData["IdManufacturer"] = new SelectList(_context.Manufacturers, "Id", "Id");
             return View();
         }
@@ -58,7 +56,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IdClass,Name,IdManufacturer,Model,Capacity,MinimumLicense,SerialNumber")] Aircraft aircraft)
+        public async Task<IActionResult> Create([Bind("Id,Name,IdManufacturer,Model,Capacity,MinimumLicense,SerialNumber")] Aircraft aircraft)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +64,6 @@ namespace BeaverEnterprisesMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", aircraft.IdClass);
             ViewData["IdManufacturer"] = new SelectList(_context.Manufacturers, "Id", "Id", aircraft.IdManufacturer);
             return View(aircraft);
         }
@@ -84,7 +81,6 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", aircraft.IdClass);
             ViewData["IdManufacturer"] = new SelectList(_context.Manufacturers, "Id", "Id", aircraft.IdManufacturer);
             return View(aircraft);
         }
@@ -94,7 +90,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdClass,Name,IdManufacturer,Model,Capacity,MinimumLicense,SerialNumber")] Aircraft aircraft)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IdManufacturer,Model,Capacity,MinimumLicense,SerialNumber")] Aircraft aircraft)
         {
             if (id != aircraft.Id)
             {
@@ -121,7 +117,6 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", aircraft.IdClass);
             ViewData["IdManufacturer"] = new SelectList(_context.Manufacturers, "Id", "Id", aircraft.IdManufacturer);
             return View(aircraft);
         }
@@ -135,7 +130,6 @@ namespace BeaverEnterprisesMVC.Controllers
             }
 
             var aircraft = await _context.Aircraft
-                .Include(a => a.IdClassNavigation)
                 .Include(a => a.IdManufacturerNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (aircraft == null)
