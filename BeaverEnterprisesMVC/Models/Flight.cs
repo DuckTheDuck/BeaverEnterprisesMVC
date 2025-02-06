@@ -19,11 +19,15 @@ public partial class Flight
 
     public int IdAircraft { get; set; }
 
+    public int IdClass { get; set; }
+
     public int Periocity { get; set; }
 
     public virtual ICollection<Function> Functions { get; set; } = new List<Function>();
 
     public virtual Aircraft IdAircraftNavigation { get; set; } = null!;
+
+    public virtual Class IdClassNavigation { get; set; } = null!;
 
     public virtual Location IdDestinationNavigation { get; set; } = null!;
 

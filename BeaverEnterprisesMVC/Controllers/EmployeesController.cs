@@ -53,7 +53,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address,Phone,MonthlySalary,IsPilot,NumHours,License")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,Name,Address,Phone,MonthlySalary,IsPilot,NumHours,License,LicenseNum")] Employee employee)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,Phone,MonthlySalary,IsPilot,NumHours,License")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,Phone,MonthlySalary,IsPilot,NumHours,License,LicenseNum")] Employee employee)
         {
             if (id != employee.Id)
             {

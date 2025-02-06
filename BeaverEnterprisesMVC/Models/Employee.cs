@@ -17,9 +17,11 @@ public partial class Employee
 
     public bool IsPilot { get; set; }
 
-    public TimeOnly? NumHours { get; set; }
+    public int? NumHours { get; set; }
 
     public string License { get; set; } = null!;
+
+    public int? LicenseNum { get; set; }
 
     public virtual ICollection<Function> Functions { get; set; } = new List<Function>();
 }

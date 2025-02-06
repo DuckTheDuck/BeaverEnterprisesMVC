@@ -47,7 +47,6 @@ public partial class BeaverEnterprisesContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Capacity).HasColumnName("CAPACITY");
-            entity.Property(e => e.IdClass).HasColumnName("ID_CLASS");
             entity.Property(e => e.IdManufacturer).HasColumnName("ID_MANUFACTURER");
             entity.Property(e => e.MinimumLicense)
                 .HasMaxLength(50)
@@ -61,12 +60,10 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("NAME");
-            entity.Property(e => e.SerialNumber).HasColumnName("SERIAL_NUMBER");
-
-            entity.HasOne(d => d.IdClassNavigation).WithMany(p => p.Aircraft)
-                .HasForeignKey(d => d.IdClass)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AIRCRAFT_CLASS");
+            entity.Property(e => e.SerialNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("SERIAL_NUMBER");
 
             entity.HasOne(d => d.IdManufacturerNavigation).WithMany(p => p.Aircraft)
                 .HasForeignKey(d => d.IdManufacturer)
@@ -110,6 +107,7 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("LICENSE");
+            entity.Property(e => e.LicenseNum).HasColumnName("LICENSE_NUM");
             entity.Property(e => e.MonthlySalary)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("MONTHLY_SALARY");
@@ -138,6 +136,7 @@ public partial class BeaverEnterprisesContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("FLIGHT_NUMBER");
             entity.Property(e => e.IdAircraft).HasColumnName("ID_AIRCRAFT");
+            entity.Property(e => e.IdClass).HasColumnName("ID_CLASS");
             entity.Property(e => e.IdDestination).HasColumnName("ID_DESTINATION");
             entity.Property(e => e.IdOrigin).HasColumnName("ID_ORIGIN");
             entity.Property(e => e.Periocity)
@@ -148,6 +147,11 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasForeignKey(d => d.IdAircraft)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_FLIGHTS_AIRCRAFT");
+
+            entity.HasOne(d => d.IdClassNavigation).WithMany(p => p.Flights)
+                .HasForeignKey(d => d.IdClass)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FLIGHTS_CLASS");
 
             entity.HasOne(d => d.IdDestinationNavigation).WithMany(p => p.FlightIdDestinationNavigations)
                 .HasForeignKey(d => d.IdDestination)
