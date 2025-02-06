@@ -13,9 +13,9 @@ public partial class Flight
 
     public int IdDestination { get; set; }
 
-    public TimeOnly DepartureTime { get; set; }
+    public string DepartureTime { get; set; } = null!;
 
-    public TimeOnly ArrivalTime { get; set; }
+    public string ArrivalTime { get; set; } = null!;
 
     public int IdAircraft { get; set; }
 
