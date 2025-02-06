@@ -20,3 +20,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.bttbackend{
+
+    margin: 7px;
+}
+.custom-container {
+    max-width: 1400px; /* Define a largura máxima do container como 1400px */
+    margin: 0 auto; /* Centraliza o container */
+}
