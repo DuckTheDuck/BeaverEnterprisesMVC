@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeaverEnterprisesMVC.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -51,7 +50,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // GET: Flights/Create
         public IActionResult Create()
         {
-            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id");
+            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Name");
             ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id");
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id");
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id");
@@ -65,20 +64,13 @@ namespace BeaverEnterprisesMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FlightNumber,IdOrigin,IdDestination,DepartureTime,ArrivalTime,IdAircraft,IdClass,Periocity")] Flight flight)
         {
-
-            ModelState.Remove("IdClassNavigation");
-            ModelState.Remove("IdOriginNavigation");
-            ModelState.Remove("IdAircraftNavigation");
-            ModelState.Remove("IdDestinationNavigation");
-
             if (ModelState.IsValid)
             {
                 _context.Add(flight);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id", flight.IdAircraft);
+            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Name", flight.IdAircraft);
             ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", flight.IdClass);
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id", flight.IdDestination);
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id", flight.IdOrigin);
@@ -98,7 +90,7 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id", flight.IdAircraft);
+            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Name", flight.IdAircraft);
             ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", flight.IdClass);
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id", flight.IdDestination);
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id", flight.IdOrigin);
@@ -137,7 +129,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Id", flight.IdAircraft);
+            ViewData["IdAircraft"] = new SelectList(_context.Aircraft, "Id", "Name", flight.IdAircraft);
             ViewData["IdClass"] = new SelectList(_context.Classes, "Id", "Id", flight.IdClass);
             ViewData["IdDestination"] = new SelectList(_context.Locations, "Id", "Id", flight.IdDestination);
             ViewData["IdOrigin"] = new SelectList(_context.Locations, "Id", "Id", flight.IdOrigin);
