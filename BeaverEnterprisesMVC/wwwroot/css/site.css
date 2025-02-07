@@ -29,3 +29,12 @@ body {
     max-width: 1400px; /* Define a largura máxima do container como 1400px */
     margin: 0 auto; /* Centraliza o container */
 }
+
+.beaverBrown {
+    background-color: rgb(130, 89, 46);
+    color: white;
+}
+    .beaverBrown:hover {
+        background-color: rgb(66, 45, 23);
+        color: white;
+    }
