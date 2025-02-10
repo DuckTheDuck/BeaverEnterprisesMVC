@@ -129,12 +129,15 @@ public partial class BeaverEnterprisesContext : DbContext
             entity.ToTable("FLIGHTS");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.ArrivalTime).HasColumnName("ARRIVAL_TIME");
-            entity.Property(e => e.DepartureTime).HasColumnName("DEPARTURE_TIME");
-            entity.Property(e => e.FlightNumber)
-                .HasMaxLength(10)
-                .IsFixedLength()
-                .HasColumnName("FLIGHT_NUMBER");
+            entity.Property(e => e.ArrivalTime)
+                .HasMaxLength(16)
+                .IsUnicode(false)
+                .HasColumnName("ARRIVAL_TIME");
+            entity.Property(e => e.DepartureTime)
+                .HasMaxLength(16)
+                .IsUnicode(false)
+                .HasColumnName("DEPARTURE_TIME");
+            entity.Property(e => e.FlightNumber).HasColumnName("FLIGHT_NUMBER");
             entity.Property(e => e.IdAircraft).HasColumnName("ID_AIRCRAFT");
             entity.Property(e => e.IdClass).HasColumnName("ID_CLASS");
             entity.Property(e => e.IdDestination).HasColumnName("ID_DESTINATION");

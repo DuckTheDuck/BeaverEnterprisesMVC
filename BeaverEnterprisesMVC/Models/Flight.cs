@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BeaverEnterprisesMVC.Models;
 
@@ -7,15 +8,18 @@ public partial class Flight
 {
     public int Id { get; set; }
 
-    public string? FlightNumber { get; set; }
+    public int? FlightNumber { get; set; }
 
     public int IdOrigin { get; set; }
 
     public int IdDestination { get; set; }
 
-    public TimeOnly DepartureTime { get; set; }
-
-    public TimeOnly ArrivalTime { get; set; }
+    [Required(ErrorMessage = "Este campo é obrigatório.")]
+    [StringLength(16, ErrorMessage = "Máximo 16 caracteres.")]
+    public string DepartureTime { get; set; } = null!;
+    [Required(ErrorMessage = "Este campo é obrigatório.")]
+    [StringLength(16, ErrorMessage = "Máximo 16 caracteres.")]
+    public string ArrivalTime { get; set; } = null!;
 
     public int IdAircraft { get; set; }
 

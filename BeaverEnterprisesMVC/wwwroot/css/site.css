@@ -1,4 +1,5 @@
 body {
+<<<<<<< HEAD
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
 }
@@ -47,4 +48,28 @@ body {
     background-color: rgb(130, 89, 46);
     color: white;
     padding: 20px 0;
+=======
+  margin-bottom: 60px;
+}
+
+.bttbackend{
+
+    margin: 7px;
+}
+.custom-container {
+    max-width: 1400px; /* Define a largura máxima do container como 1400px */
+    margin: 0 auto; /* Centraliza o container */
+}
+
+.beaverBrown {
+    background-color: rgb(130, 89, 46);
+    color: white;
+}
+    .beaverBrown:hover {
+        background-color: rgb(66, 45, 23);
+        color: white;
+    }
+.adminBar{
+    text-align:left;
+>>>>>>> 66e0f73c2d0db50feebac55febaa92ecca2c1f7f
 }

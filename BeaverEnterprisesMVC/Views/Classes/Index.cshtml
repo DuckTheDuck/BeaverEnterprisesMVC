@@ -1,14 +1,18 @@
 ﻿@model IEnumerable<BeaverEnterprisesMVC.Models.Class>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Index</h1>
+<form method="get" asp-action="Create" style="display:inline;">
+    <button type="submit" class="btn beaverBrown bttbackend">Create</button>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -43,9 +47,15 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <form method="get" asp-action="Edit" asp-route-id="@item.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-primary bttbackend">Edit</button>
+                    </form>
+                    <form method="get" asp-action="Details" asp-route-id="@item.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-info bttbackend">Details</button>
+                    </form>
+                    <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger bttbackend">Delete</button>
+                    </form>
             </td>
         </tr>
 }

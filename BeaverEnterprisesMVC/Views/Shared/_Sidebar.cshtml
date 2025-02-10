@@ -1,0 +1,13 @@
+﻿<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<aside style="width: 250px; background-color: #f8f9fa; height: 100vh; padding: 15px; position: fixed;">
+    <h4>Admin Panel</h4>
+    <div class="d-flex flex-column">
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Manufacturers")'">Manufacturers</button>
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Functions")'">Functions</button>
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Flights")'">Flights</button>
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Employees")'">Employees</button>
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Classes")'">Classes</button>
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Aircraft")'">Aircraft</button>
+        <button class="btn btn-light mb-2 adminBar" onclick="window.location.href='@Url.Action("Index", "Locations")'">Locations</button>
+    </div>
+</aside>

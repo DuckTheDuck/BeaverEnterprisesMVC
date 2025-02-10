@@ -58,6 +58,8 @@ namespace BeaverEnterprisesMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,IdManufacturer,Model,Capacity,MinimumLicense,SerialNumber")] Aircraft aircraft)
         {
+            if (aircraft.Name.Length > 7) { return View(aircraft); }
+
             if (ModelState.IsValid)
             {
                 _context.Add(aircraft);

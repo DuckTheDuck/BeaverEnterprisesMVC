@@ -64,6 +64,11 @@ namespace BeaverEnterprisesMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FlightNumber,IdOrigin,IdDestination,DepartureTime,ArrivalTime,IdAircraft,IdClass,Periocity")] Flight flight)
         {
+            ModelState.Remove("IdClassNavigation");
+            ModelState.Remove("IdOriginNavigation");
+            ModelState.Remove("IdAircraftNavigation");
+            ModelState.Remove("IdDestinationNavigation");
+
             if (ModelState.IsValid)
             {
                 _context.Add(flight);
@@ -108,6 +113,11 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 return NotFound();
             }
+
+            ModelState.Remove("IdClassNavigation");
+            ModelState.Remove("IdOriginNavigation");
+            ModelState.Remove("IdAircraftNavigation");
+            ModelState.Remove("IdDestinationNavigation");
 
             if (ModelState.IsValid)
             {
