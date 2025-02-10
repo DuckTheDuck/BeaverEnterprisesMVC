@@ -38,3 +38,6 @@ body {
         background-color: rgb(66, 45, 23);
         color: white;
     }
+.adminBar{
+    text-align:left;
+}
