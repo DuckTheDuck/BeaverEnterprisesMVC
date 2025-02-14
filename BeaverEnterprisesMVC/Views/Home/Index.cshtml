@@ -7,6 +7,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airline Homepage</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> 
+    <style>
+        /* Estilo do dropdown */
+        .dropdown {
+            position: relative;
+            width: 250px;
+        }
+
+        .suggestions {
+            position: absolute;
+            width: 100%;
+            background: rgb(200, 200, 200);
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            text-align: left;
+            color: rgb(130, 89, 46);
+            padding-left: 0;
+            margin-left: 0;
+        }
+
+        .suggestions li {
+            padding: 8px;
+            cursor: pointer;
+            list-style: none;
+
+        }
+
+        .suggestions li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
 
@@ -33,13 +65,13 @@
             <h2>Find Your Flight</h2>
             <form>
                 <div class="row">
-                    <div class="col-md-4">
-                        <label>From</label>
-                        <input type="text" class="form-control" placeholder="Origin">
+                    <div class="dropdown">
+                        <input type="text" class="form-control" id="airport-input" placeholder="Origin" oninput="inputt">
+                        <ul id="suggestions" class="suggestions"></ul>
                     </div>
-                    <div class="col-md-4">
-                        <label>To</label>
-                        <input type="text" class="form-control" placeholder="Destination">
+                    <div class="dropdown">
+                        <input type="text" class="form-control" id="airport-input" placeholder="Destination">
+                        <ul id="suggestions" class="suggestions"></ul>
                     </div>
                     <div class="col-md-4">
                         <label>Departure Date</label>
@@ -51,6 +83,55 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Search</button>
+
+
+                <script>
+                    const aeroportos = [
+                        "Lisboa (LIS)", "Lima (LIM)", "Londres Heathrow (LHR)",
+                        "Los Angeles (LAX)", "Lyon (LYS)", "Lagos (LOS)",
+                        "La Paz (LPB)", "Larnaca (LCA)", "Luxemburgo (LUX)"
+                    ];
+
+                    const input = document.getElementById("airport-input");
+                    const suggestions = document.getElementById("suggestions");
+
+                    input.addEventListener("input", () => {
+                        const UserInput = input.value.toLowerCase();
+                        suggestions.innerHTML = "";
+                        suggestions.style.display = "none";
+
+                        if(UserInput.length > 0)
+                        {
+                            const UserSuggestionsList = aeroportos.filter(aeroportos => aeroportos
+                                                                                    .toLowerCase()
+                                                                                    .contains(UserIpunt));
+                            if(UserSuggestionsList.length > 0)
+                            {
+                                suggestions.style.display = "block";
+                                UserSuggestionsList.forEach(aeroporto => {
+
+                                    const li = document.createElement("li");
+                                    li.textContent = aeroporto;
+
+                                    li.addEventListener("click", () => {
+                                        input.value = aeroporto;
+                                        suggestions.style.display = "none";
+                                    });
+
+                                    suggestions.appendChild(li);
+                                });
+                            }
+
+                        }
+
+                    };
+
+                    document.addEventListener("click", (event) => {
+                        if (!input.contains(event.target) && !suggestions.contains(event.target)) {
+                            suggestions.style.display = "none";
+                        }
+                    });
+                </script>
             </form>
         </div>
     </div>
