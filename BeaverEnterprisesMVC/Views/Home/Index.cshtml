@@ -67,11 +67,11 @@
                 <div class="row">
                     <div class="dropdown">
                         <input type="text" class="form-control" id="airport-input" placeholder="Origin" oninput="inputt">
-                        <ul id="suggestions" class="suggestions"></ul>
+                        @Html.Partial("_AirportsSuggestions");
                     </div>
                     <div class="dropdown">
                         <input type="text" class="form-control" id="airport-input" placeholder="Destination">
-                        <ul id="suggestions" class="suggestions"></ul>
+                        
                     </div>
                     <div class="col-md-4">
                         <label>Departure Date</label>
@@ -85,51 +85,44 @@
                 <button type="submit" class="btn btn-primary mt-3">Search</button>
 
 
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
-                    const aeroportos = [
-                        "Lisboa (LIS)", "Lima (LIM)", "Londres Heathrow (LHR)",
-                        "Los Angeles (LAX)", "Lyon (LYS)", "Lagos (LOS)",
-                        "La Paz (LPB)", "Larnaca (LCA)", "Luxemburgo (LUX)"
-                    ];
+                    $(document).ready(function () {
+                        const input = document.getElementById("airport-input");
+                        input.addEventListener("input", () => {
 
-                    const input = document.getElementById("airport-input");
-                    const suggestions = document.getElementById("suggestions");
+                            const userInput = input.value.toLowerCase();
+                            var suggestions = $("#suggestions");
+                            suggestions.empty().hide();
 
-                    input.addEventListener("input", () => {
-                        const UserInput = input.value.toLowerCase();
-                        suggestions.innerHTML = "";
-                        suggestions.style.display = "none";
+                            if (userInput.length > 0) {
+                                $.getJSON("/Airport/GetSuggestions", { term: userInput }, function (data) {
+                                    if (data.length > 0) {
+                                        suggestions.show();
 
-                        if(UserInput.length > 0)
-                        {
-                            const UserSuggestionsList = aeroportos.filter(aeroportos => aeroportos
-                                                                                    .toLowerCase()
-                                                                                    .contains(UserIpunt));
-                            if(UserSuggestionsList.length > 0)
-                            {
-                                suggestions.style.display = "block";
-                                UserSuggestionsList.forEach(aeroporto => {
+                                        data.forEach(function (aeroporto) {
+                                            var li = $("<li>").text(aeroporto).css({
+                                                "cursor": "pointer",
+                                                "padding": "5px"
+                                            });
 
-                                    const li = document.createElement("li");
-                                    li.textContent = aeroporto;
+                                            li.on("click", function () {
+                                                $("#airport-input").val(aeroporto);
+                                                suggestions.hide();
+                                            });
 
-                                    li.addEventListener("click", () => {
-                                        input.value = aeroporto;
-                                        suggestions.style.display = "none";
-                                    });
-
-                                    suggestions.appendChild(li);
+                                            suggestions.append(li);
+                                        });
+                                    }
                                 });
                             }
+                        });
 
-                        }
-
-                    };
-
-                    document.addEventListener("click", (event) => {
-                        if (!input.contains(event.target) && !suggestions.contains(event.target)) {
-                            suggestions.style.display = "none";
-                        }
+                        $(document).click(function (event) {
+                            if (!$("#airport-input").is(event.target) && !$("#suggestions").is(event.target) && $("#suggestions").has(event.target).length === 0) {
+                                $("#suggestions").hide();
+                            }
+                        });
                     });
                 </script>
             </form>
