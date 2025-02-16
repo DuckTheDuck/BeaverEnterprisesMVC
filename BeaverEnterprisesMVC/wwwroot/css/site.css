@@ -9,6 +9,7 @@ body {
     background-color: #f4f4f4;
     margin: 0;
 }
+
 .main {
     flex: 1; /* Isso faz com que o conteúdo principal ocupe o espaço disponível */
 }
@@ -220,7 +221,7 @@ h3 {
 .margin {
     display: flex;
     align-items: center;
-    gap: 15px; 
+    gap: 15px;
 }
 
 .divider {
@@ -229,14 +230,14 @@ h3 {
     align-items: flex-start;
 }
 
-.divider .form-control {
-    width: 100%; /* Garantir que o input ocupe todo o espaço disponível */
-}
+    .divider .form-control {
+        width: 100%; /* Garantir que o input ocupe todo o espaço disponível */
+    }
 
-.divider .suggestions {
-    margin-top: 8px; /* Adicionar um pequeno espaçamento entre o input e as sugestões */
-    display: block; /* Garantir que o conteúdo das sugestões fique abaixo do input */
-}
+    .divider .suggestions {
+        margin-top: 8px; /* Adicionar um pequeno espaçamento entre o input e as sugestões */
+        display: block; /* Garantir que o conteúdo das sugestões fique abaixo do input */
+    }
 
 .suggestions-list {
     background: rgb(130, 89, 46); /* Cor de fundo castanha */
