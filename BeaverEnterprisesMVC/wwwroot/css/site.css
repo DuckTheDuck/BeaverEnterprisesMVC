@@ -1,9 +1,17 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
 }
-
+.main {
+    flex: 1; /* Isso faz com que o conteúdo principal ocupe o espaço disponível */
+}
 /* Navbar */
 .navbar {
     background-color: #00274d;
@@ -27,32 +35,30 @@ body {
 /* Hero Section */
 .hero {
     background: url('https://source.unsplash.com/1600x900/?airplane,airport') center/cover;
-    height: 60vh;
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* Alinha o conteúdo da hero ao fundo */
     justify-content: center;
     text-align: center;
     color: white;
-    position: relative;
+    position: absolute; /* Faz com que a hero se posicione dentro da .image */
+    bottom: 0; /* Posiciona a hero na parte inferior da .image */
+    width: 100%; /* Garante que a hero ocupe toda a largura da imagem */
+    margin-bottom: 35px; /* Remove o margin-bottom, pois a hero já está posicionada */
 }
 
-    .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-    }
+
 
 .search-box {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(130, 89, 46, 0.2); /* Cor com opacidade */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 600px;
+    max-width: 1000px;
     position: relative;
     z-index: 1;
 }
+
 
 .btn-primary {
     background-color: #ff9800;
@@ -121,10 +127,10 @@ h3 {
 
 /* Footer */
 .footer {
-    background-color: #00274d;
+    background-color: #333;
     color: white;
     text-align: center;
-    padding: 15px;
+    padding: 10px;
 }
 
 .flight-card {
@@ -192,3 +198,65 @@ h3 {
     pointer-events: none;
     background: #f0f0f0;
 }
+
+
+.dropdown {
+    position: relative;
+    width: 250px;
+}
+
+.image {
+    background-image: url('/images/eiffel-tower-beaver.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 60px;
+    overflow: hidden;
+    margin: 50px;
+    position: relative;
+    height: 600px;
+}
+
+.margin {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+}
+
+.divider {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.divider .form-control {
+    width: 100%; /* Garantir que o input ocupe todo o espaço disponível */
+}
+
+.divider .suggestions {
+    margin-top: 8px; /* Adicionar um pequeno espaçamento entre o input e as sugestões */
+    display: block; /* Garantir que o conteúdo das sugestões fique abaixo do input */
+}
+
+.suggestions-list {
+    background: rgb(130, 89, 46); /* Cor de fundo castanha */
+    border-radius: 8px; /* Bordas arredondadas */
+    color: white; /* Texto branco */
+    list-style: none;
+    padding: 5px;
+    position: absolute;
+    width: 200px;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 0;
+    display: none; /* Inicialmente escondido */
+    border: 1px solid #000000; /* Borda preta */
+}
+
+    .suggestions-list li {
+        padding: 5px;
+    }
+
+        .suggestions-list li:hover {
+            background: rgb(110, 70, 35); /* Cor mais escura ao passar o mouse */
+        }

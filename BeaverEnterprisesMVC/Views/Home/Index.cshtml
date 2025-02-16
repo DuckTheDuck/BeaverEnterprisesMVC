@@ -7,38 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airline Homepage</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> 
-    <style>
-        /* Estilo do dropdown */
-        .dropdown {
-            position: relative;
-            width: 250px;
-        }
+    <script src="~/site.js/airport-autocomplete.js"></script>
 
-        .suggestions {
-            position: absolute;
-            width: 100%;
-            background: rgb(200, 200, 200);
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
-            display: none;
-            text-align: left;
-            color: rgb(130, 89, 46);
-            padding-left: 0;
-            margin-left: 0;
-        }
-
-        .suggestions li {
-            padding: 8px;
-            cursor: pointer;
-            list-style: none;
-
-        }
-
-        .suggestions li:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
 </head>
 <body>
 
@@ -59,76 +29,26 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero">
-        <div class="search-box">
-            <h2>Find Your Flight</h2>
-            <form>
-                <div class="row">
-                    <div class="dropdown">
-                        <input type="text" class="form-control" id="airport-input" placeholder="Origin" oninput="inputt">
-                        @Html.Partial("_AirportsSuggestions");
-                    </div>
-                    <div class="dropdown">
-                        <input type="text" class="form-control" id="airport-input" placeholder="Destination">
-                        
-                    </div>
-                    <div class="col-md-4">
-                        <label>Departure Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label>Arrival Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary mt-3">Search</button>
+    <div class="image">
+        <!-- Hero Section -->
+        <div class="container">
+            <a class="navbar-brand" href="#">Airline</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingAvailability", "Home")">Book</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Offers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="hero">
 
-
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                <script>
-                    $(document).ready(function () {
-                        const input = document.getElementById("airport-input");
-                        input.addEventListener("input", () => {
-
-                            const userInput = input.value.toLowerCase();
-                            var suggestions = $("#suggestions");
-                            suggestions.empty().hide();
-
-                            if (userInput.length > 0) {
-                                $.getJSON("/Airport/GetSuggestions", { term: userInput }, function (data) {
-                                    if (data.length > 0) {
-                                        suggestions.show();
-
-                                        data.forEach(function (aeroporto) {
-                                            var li = $("<li>").text(aeroporto).css({
-                                                "cursor": "pointer",
-                                                "padding": "5px"
-                                            });
-
-                                            li.on("click", function () {
-                                                $("#airport-input").val(aeroporto);
-                                                suggestions.hide();
-                                            });
-
-                                            suggestions.append(li);
-                                        });
-                                    }
-                                });
-                            }
-                        });
-
-                        $(document).click(function (event) {
-                            if (!$("#airport-input").is(event.target) && !$("#suggestions").is(event.target) && $("#suggestions").has(event.target).length === 0) {
-                                $("#suggestions").hide();
-                            }
-                        });
-                    });
-                </script>
-            </form>
+            @await Html.PartialAsync("_MainLayout")
         </div>
     </div>
-
     <!-- Promotions -->
     <div class="container mt-5">
         <h3>Special Offers</h3>
@@ -166,11 +86,10 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer text-center">
-        <p>&copy; 2025 Airline. All Rights Reserved.</p>
-    </footer>
+    @await Html.PartialAsync("_Footer")
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+
 </html>
