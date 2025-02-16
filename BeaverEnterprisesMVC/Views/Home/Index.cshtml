@@ -35,17 +35,13 @@
 
     <div class="image">
         <!-- Hero Section -->
-        <div class="container">
-            <a class="navbar-brand" href="#">Airline</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingAvailability", "Home")">Book</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Offers</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                </ul>
+        <div class="navbarcustom">
+            <a href="#" class="airline">Airline</a>
+            <div class="leftnavbarcustom">
+                <div class="navitem"><a class="nav-link" href="@Url.Action("LoginRegister", "Account")"> Login & Registration</a></div>
+                <div class="navitem"><a class="nav-link" href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                <div class="navitem"><a class="nav-link" href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                <div class="navitem"><a class="nav-link" href="#">Contact</a></div>
             </div>
         </div>
         <div class="hero">

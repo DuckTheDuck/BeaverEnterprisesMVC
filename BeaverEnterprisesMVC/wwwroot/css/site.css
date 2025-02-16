@@ -50,7 +50,7 @@ body {
 
 
 .search-box {
-    background: rgba(130, 89, 46, 0.2); /* Cor com opacidade */
+    background: rgba(130, 89, 46, 0.7); /* Cor com opacidade */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -207,7 +207,7 @@ h3 {
 }
 
 .image {
-    background-image: url('/images/eiffel-tower-beaver.png');
+    background-image: url('/images/fuji-beaver-ya.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -240,7 +240,7 @@ h3 {
     }
 
 .suggestions-list {
-    background: rgb(130, 89, 46); /* Cor de fundo castanha */
+    background: rgb(130, 89, 46, 0.5); /* Cor de fundo castanha */
     border-radius: 8px; /* Bordas arredondadas */
     color: white; /* Texto branco */
     list-style: none;
@@ -250,8 +250,8 @@ h3 {
     max-height: 150px;
     overflow-y: auto;
     margin: 0;
-    display: none; /* Inicialmente escondido */
-    border: 1px solid #000000; /* Borda preta */
+    display: none; 
+    border: 1px solid #000000; 
 }
 
     .suggestions-list li {
@@ -259,5 +259,48 @@ h3 {
     }
 
         .suggestions-list li:hover {
-            background: rgb(110, 70, 35); /* Cor mais escura ao passar o mouse */
+            background: rgb(110, 70, 35); 
         }
+
+
+.navbarcustom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    background-color: rgba(130, 89, 46, 0.8); 
+    border-radius: 15px;
+    margin-top: 300px;
+    margin-left: 500px;
+    margin-right: 500px; 
+}
+
+.leftnavbarcustom {
+    display: flex;
+    gap: 20px; 
+}
+
+.navitem a, .login-btn {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+    .navitem a:hover, .login-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2); 
+    }
+
+.navbarcustom a {
+    color: white;
+    text-decoration: none;
+}
+.airline {
+
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5px;
+}
