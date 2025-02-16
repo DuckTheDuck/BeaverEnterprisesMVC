@@ -1,0 +1,149 @@
+﻿@{
+    ViewData["Title"] = "CheckIn Page";
+}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-In | Airline</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">Airline</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link login-btn" href="@Url.Action("LoginRegister", "Account")">
+                            <i class="fas fa-user-circle"></i> Login & Registration
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingAvailability", "Home")">Book</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="@Url.Action("CheckIn", "Home")">Check-In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Texto para encher a tela -->
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Online Check-In</h2>
+
+                <!-- Formulário de Check-In -->
+                <div id="checkin-form">
+                    <label for="booking" class="form-label">Booking reference or ticket number</label>
+                    <input type="text" id="booking" class="form-control mb-3" placeholder="Enter your reference number">
+
+                    <label for="user-name" class="form-label">User name</label>
+                    <input type="text" id="user-name" class="form-control mb-3" placeholder="Enter your username">
+
+                    <button class="btn-checkin" onclick="confirmCheckIn()">Confirm Check-In</button>
+                </div>
+
+                <!-- Informação de Check-In Confirmado (esconde antes de preencher) -->
+                <div id="checkin-confirmed" style="display: none;">
+                    <p class="checkin-info">Reserva: <span class="highlight" id="reserva"></span></p>
+                    <p class="checkin-info">Nome: <span class="highlight" id="nome"></span></p>
+                    <p class="checkin-info">Data do Voo: <span class="highlight">20 de Fevereiro de 2025</span></p>
+                    <p class="checkin-info">Destino: <span class="highlight">Lisboa → Paris</span></p>
+                </div>
+
+                <!-- Informações adicionais para encher a tela -->
+                <div class="extra-info mt-5">
+                    <p><strong>All check-in options:</strong></p>
+                    <p>With our convenient check-in options, you can easily check in online, through your mobile phone, or at a self-service check-in kiosk – whichever method works best for you.</p>
+                    <p><strong>Advantages:</strong></p>
+                    <p>Check-in with a username simplifies the process, saves time, and protects privacy while improving efficiency.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer text-center">
+        <p1>&copy; 2025 Airline. All Rights Reserved.</p1>
+    </footer>
+
+    <script>
+        function confirmCheckIn() {
+            let bookingRef = document.getElementById("booking").value;
+            let userName = document.getElementById("user-name").value;
+
+            if (bookingRef.trim() === "" || userName.trim() === "") {   
+                alert("Por favor, preencha todos os campos!");
+                return;
+            }
+
+            // Esconde o formulário e mostra a informação do check-in
+            document.getElementById("checkin-form").style.display = "none";
+            document.getElementById("checkin-confirmed").style.display = "block";
+
+            // Atualiza os dados do check-in
+            document.getElementById("reserva").innerText = bookingRef;
+            document.getElementById("nome").innerText = userName;
+        }
+    </script>
+
+    <style>
+        .p {
+            margin-bottom:30px;
+        }
+        .checkin-content {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+            .checkin-content h2 {
+                font-size: 26px;
+                margin-bottom: 20px;
+            }
+
+        .checkin-info {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
+            padding: 8px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* Margens aplicadas diretamente aos inputs e ao botão */
+        input, .btn-checkin {
+            margin: 15px 0; /* Margens aplicadas */
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        .btn-checkin {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 18px;
+            margin-bottom: 130px;
+            width:40%;
+        }
+
+            .btn-checkin:hover {
+                background-color: #0056b3;
+            }
+    </style>
+
+</body>
+</html>

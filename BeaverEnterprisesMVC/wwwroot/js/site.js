@@ -1,4 +1,23 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$('.form-control').on('focus blur', function (e) {
+    $(this).parents('.form-group').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
+}).trigger('blur');
 
-// Write your JavaScript code.
+$('#moveleft').click(function () {
+    $('#textbox').animate({
+        'marginLeft': "0" //moves left
+    });
+
+    $('.toplam').animate({
+        'marginLeft': "100%" //moves right
+    });
+});
+
+$('#moveright').click(function () {
+    $('#textbox').animate({
+        'marginLeft': "50%" //moves right
+    });
+
+    $('.toplam').animate({
+        'marginLeft': "0" //moves right
+    });
+});

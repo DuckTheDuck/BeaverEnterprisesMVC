@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
+    display: flex;
 }
 
 /* Navbar */
@@ -125,6 +126,8 @@ h3 {
     color: white;
     text-align: center;
     padding: 15px;
+    margin: 0; /* Remova qualquer margem do footer */
+    position: relative;
 }
 
 .flight-card {
@@ -191,4 +194,8 @@ h3 {
 .disabled {
     pointer-events: none;
     background: #f0f0f0;
+}
+
+*, ::after, ::before {
+    box-sizing: content-box !important;
 }
