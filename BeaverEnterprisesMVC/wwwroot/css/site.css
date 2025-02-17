@@ -1,5 +1,5 @@
 html, body {
-    height: 100%;
+
     margin: 0;
     padding: 0;
 }
@@ -40,17 +40,17 @@ body {
     align-items: flex-end; /* Alinha o conteúdo da hero ao fundo */
     justify-content: center;
     text-align: center;
-    color: white;
+    color: rgb(130, 89, 46);
     position: absolute; /* Faz com que a hero se posicione dentro da .image */
     bottom: 0; /* Posiciona a hero na parte inferior da .image */
     width: 100%; /* Garante que a hero ocupe toda a largura da imagem */
-    margin-bottom: 35px; /* Remove o margin-bottom, pois a hero já está posicionada */
+    margin-bottom: 150px; /* Remove o margin-bottom, pois a hero já está posicionada */
 }
 
 
 
 .search-box {
-    background: rgba(130, 89, 46, 0.7); /* Cor com opacidade */
+    background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -128,10 +128,11 @@ h3 {
 
 /* Footer */
 .footer {
-    background-color: #333;
+    background-color: rgb(130, 89, 46);
     color: white;
     text-align: center;
     padding: 10px;
+    margin-bottom: 0px;
 }
 
 .flight-card {
@@ -220,7 +221,6 @@ h3 {
 
 .margin {
     display: flex;
-    align-items: center;
     gap: 15px;
 }
 
@@ -250,8 +250,8 @@ h3 {
     max-height: 150px;
     overflow-y: auto;
     margin: 0;
-    display: none; 
-    border: 1px solid #000000; 
+    display: none;
+    border: 1px solid #000000;
 }
 
     .suggestions-list li {
@@ -259,30 +259,46 @@ h3 {
     }
 
         .suggestions-list li:hover {
-            background: rgb(110, 70, 35); 
+            background: rgb(110, 70, 35);
         }
 
 
 .navbarcustom {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 30px;
-    background-color: rgba(130, 89, 46, 0.8); 
-    border-radius: 15px;
-    margin-top: 300px;
-    margin-left: 500px;
-    margin-right: 500px; 
+    background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: rgb(130, 89, 46);
+    width: 100%;
+    max-width: 1250px;
+    position: relative;
+    margin-top: 1%
+}
+
+.herov2 {
+    display: flex; /* Alinha o conteúdo da hero ao fundo */
+    justify-content: center;
+    text-align: center;
+    color: rgb(130, 89, 46);
+    position: absolute; /* Faz com que a hero se posicione dentro da .image */ /* Posiciona a hero na parte inferior da .image */
+    width: 100%; /* Garante que a hero ocupe toda a largura da imagem */
 }
 
 .leftnavbarcustom {
     display: flex;
-    gap: 20px; 
+    gap: 20px;
+    margin-left: auto;
+}
+.navitem{
+
+    align-content: center;
+
 }
 
 .navitem a, .login-btn {
     text-decoration: none;
-    color: white;
+    color: rgb(130, 89, 46);
     font-weight: bold;
     padding: 8px 15px;
     border-radius: 10px;
@@ -290,18 +306,35 @@ h3 {
 }
 
     .navitem a:hover, .login-btn:hover {
-        background-color: rgba(255, 255, 255, 0.2); 
+        background-color: rgba(255, 255, 255, 0.2);
     }
 
 .navbarcustom a {
-    color: white;
+    color: rgb(130, 89, 46);
     text-decoration: none;
 }
-.airline {
 
+.airline {
     font-size: 24px;
     font-weight: bold;
     color: #333;
+    align-content: center;
+}
+.bttpesquisar {
+    margin-top: 20px;
+    background-color: rgb(130, 89, 46);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+    .bttpesquisar:hover {
+        background-color: rgb(150, 89, 46);
+    }
     margin-top: 5px;
 }
 

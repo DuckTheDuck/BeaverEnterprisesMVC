@@ -4,6 +4,7 @@
 
     <div class="margin">
         <div class="divider">
+            <label for="departure">Origem</label>
             <input type="text" class="form-control" id="airport-input-Origin" placeholder="Origin">
             <div class="suggestions">
                 @await Html.PartialAsync("_AirportsSuggestionsOrigin")
@@ -11,6 +12,7 @@
         </div>
 
         <div class="divider">
+            <label for="departure">Destino</label>
             <input type="text" class="form-control" id="airport-input-Destination" placeholder="Destination">
             <div class="suggestions">
                 @await Html.PartialAsync("_AirportsSuggestionsDestination")
@@ -26,7 +28,8 @@
             <label for="arrival">Chegada</label>
             <input type="date" class="form-control" id="arrival">
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Search</button>
+        <input type="submit" class="bttpesquisar" value="Pesquisar">
+
     </div>
 
 </div>
