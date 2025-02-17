@@ -1,5 +1,51 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Login and Signup Form</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/css/Register.css">
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Signup Form -->
+    <div class="centered-form-Gabriel-Login">
+        <div class="form-Gabriel-Login">
+            <div class="form-content-Gabriel-Login">
+                <header>Signup</header>
+                <form action="#">
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="email" placeholder="Email" class="input-Gabriel-Login">
+                    </div>
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="text" placeholder="Username" class="input-Gabriel-Login">
+                    </div>
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="text" placeholder="Phone" class="input-Gabriel-Login">
+                    </div>
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="text" placeholder="Address" class="input-Gabriel-Login">
+                    </div>
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="password" placeholder="Password" class="password-Gabriel-Login">
+                        <i class='bx bx-hide eye-icon-Gabriel-Login'></i>
+                    </div>
+                    <div class="field-Gabriel-Login button-field-Gabriel-Login">
+                        <button>Signup</button>
+                    </div>
+                </form>
+                <div class="form-link-Gabriel-Login">
+                    <span>Already have an account? <a href="@Url.Action("Login", "Home")" class="link-Gabriel-Login login-link-Gabriel-Login">Login</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="~/js/Design.js"></script>
+</body>
+</html>
