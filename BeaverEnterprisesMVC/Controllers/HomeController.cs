@@ -27,6 +27,10 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
+        public IActionResult CheckIn()
+        {
+            return View();
+        }
 
         public IActionResult Login_Register()
         {

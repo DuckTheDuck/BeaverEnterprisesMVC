@@ -8,8 +8,31 @@
     <title>Flight Availability</title>
     <link rel="stylesheet" href="styles.css"> <!-- Arquivo CSS externo -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">Airline</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link login-btn" href="@Url.Action("LoginRegister", "Account")">
+                            <i class="fas fa-user-circle"></i> Login & Registration
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingAvailability", "Home")">Book</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("CheckIn", "Home")">Check-In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container mt-4">
         <div class="flight-card">
             <div class="flight-header">
@@ -33,43 +56,89 @@
                         <p>Economy</p>
                         <h4>€581.02</h4>
                     </div>
-                    <div class="price-box business disabled">
-                        <p>Business</p>
-                        <h4>Not Available</h4>
+                    <div class="price-box class" onclick="selectClass(this, 'Premium econumy')">
+                        <p>Premium Economy</p>
+                        <h4>€1014.11</h4>
+                    </div>
+                    <div class="price-box class" onclick="selectClass(this, '1´class')">
+                        <p>1´Class</p>
+                        <h4>€1683.87</h4>
+                    </div>
+                    <div class="price-box class" onclick="selectClass(this, 'Bussiness')">
+                        <p>Bussiness</p>
+                        <h4>€2034.87</h4>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="container mt-4">
         <div class="flight-card">
             <div class="flight-header">
                 <div>
-                    <div class="flight-time">19:55 ➝ 09:15 (+1 day)</div>
-                    <div class="flight-duration">Duration: 12h 20m (Stop: BRU)</div>
-                    <div class="flight-airline">Operated by TAP Air Portugal, Brussels Airlines</div>
+                    <div class="flight-time">20:55</div>
+                    <div class="text-muted">LIS - Terminal 1</div>
+                </div>
+                <div>
+                    <div class="flight-duration">6h 45m BRU</div>
+                    <div class="text-muted">Duration: 10h 35m</div>
+                </div>
+                <div>
+                    <div class="flight-time">08:30 +1 day</div>
+                    <div class="text-muted">CDG - Terminal 1</div>
+                </div>
+                <div class="flight-airline">
+                    ✈ Operated by TAP Air Portugal, Brussels Airlines
                 </div>
                 <div class="d-flex">
                     <div class="price-box economy" onclick="selectClass(this, 'economy')">
                         <p>Economy</p>
                         <h4>€581.02</h4>
                     </div>
-                    <div class="price-box business disabled" style="color: #ccc;">
-                        <p>Business</p>
-                        <h4>Not Available</h4>
+                    <div class="price-box class" onclick="selectClass(this, 'Premium econumy')">
+                        <p>Premium Economy</p>
+                        <h4>€1014.11</h4>
+                    </div>
+                    <div class="price-box class" onclick="selectClass(this, '1´class')">
+                        <p>1´Class</p>
+                        <h4>€1683.87</h4>
+                    </div>
+                    <div class="price-box class" onclick="selectClass(this, 'Bussiness')">
+                        <p>Bussiness</p>
+                        <h4>€2034.87</h4>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="container text-end mt-4">
+        <button class="btn-primary" onclick="confirmSelection()">Search</button>
+    </div>
     <footer class="footer text-center">
         <p>&copy; 2025 Airline. All Rights Reserved.</p>
     </footer>
     <script>
-        function selectClass(element, classType) {
-            let parent = element.closest('.flight-card');
-            let options = parent.querySelectorAll('.price-box');
-            options.forEach(opt => opt.classList.remove('selected'));
+        function selectClass(element) {
+            // Se o elemento já estiver selecionado, desseleciona e sai
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                return;
+            }
+
+            // Remove a classe "selected" de todas as opções em todos os voos
+            document.querySelectorAll('.price-box').forEach(opt => opt.classList.remove('selected'));
+
+            // Adiciona a classe "selected" apenas ao elemento clicado
             element.classList.add('selected');
+        }
+            function confirmSelection() {
+            let selected = document.querySelector('.price-box.selected');
+            if (selected) {
+                alert("Selecionaste a classe: " + selected.innerText.trim());
+            } else {
+                alert("Por favor, seleciona uma classe antes de continuar!");
+            }
         }
     </script>
 </body>

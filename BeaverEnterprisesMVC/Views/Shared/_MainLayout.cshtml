@@ -1,0 +1,32 @@
+﻿<div class="search-box">
+    <h2>Find Your Flight</h2>
+
+
+    <div class="margin">
+        <div class="divider">
+            <input type="text" class="form-control" id="airport-input-Origin" placeholder="Origin">
+            <div class="suggestions">
+                @await Html.PartialAsync("_AirportsSuggestionsOrigin")
+            </div>
+        </div>
+
+        <div class="divider">
+            <input type="text" class="form-control" id="airport-input-Destination" placeholder="Destination">
+            <div class="suggestions">
+                @await Html.PartialAsync("_AirportsSuggestionsDestination")
+            </div>
+        </div>
+
+        <div class="divider">
+            <label for="departure">Partida</label>
+            <input type="date" class="form-control" id="departure">
+        </div>
+
+        <div class="divider">
+            <label for="arrival">Chegada</label>
+            <input type="date" class="form-control" id="arrival">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Search</button>
+    </div>
+
+</div>
