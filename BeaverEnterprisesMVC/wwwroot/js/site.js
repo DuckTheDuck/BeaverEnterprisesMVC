@@ -26,6 +26,28 @@ $(document).ready(function () {
     
 });
 
+function validateForm() {
+
+    var origin = document.getElementById("airport-input-Origin").value.trim();
+    var destination = document.getElementById("airport-input-Destination").value.trim();
+    var departure = document.getElementById("departure").value;
+    var arrival = document.getElementById("arrival").value;
+
+    if (!origin || !destination || !departure || !arrival) {alert("Por favor, preencha todos os campos antes de continuar!");return false;}
+    if (origin === destination) {alert("Não podes ter o mesmo local para origem e destino!"); return false;}
+
+    var today = new Date();  
+    today.setHours(0, 0, 0, 0); 
+
+    var departureDate = new Date(departure + "T00:00:00"); 
+    var arrivalDate = new Date(arrival + "T00:00:00");
+
+    if (departureDate < today) {alert("A data de partida não pode ser inferior à data de hoje!");return false;}
+    if (arrivalDate < departureDate) {alert("A data de chegada não pode ser antes da data de partida!");return false;}
+
+    return true; // Permite o envio do formulário
+}
+
 
 function suggest(input, suggestion) {
 
