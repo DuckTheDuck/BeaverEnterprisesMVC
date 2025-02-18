@@ -236,27 +236,29 @@ public partial class BeaverEnterprisesContext : DbContext
 
             entity.ToTable("PASSENGER");
 
-            entity.HasIndex(e => e.Cc, "UQ__PASSENGE__32149A64DE86B63E").IsUnique();
+            entity.HasIndex(e => e.Gmail, "UQ__PASSENGE__32149A64DE86B63E").IsUnique();
 
-            entity.HasIndex(e => e.Nif, "UQ__PASSENGE__C7DEC330271665E4").IsUnique();
+            entity.HasIndex(e => e.Password, "UQ__PASSENGE__C7DEC330271665E4").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Address)
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("ADDRESS");
-            entity.Property(e => e.Cc)
-                .HasMaxLength(20)
+            entity.Property(e => e.Code).HasColumnName("CODE");
+            entity.Property(e => e.Gmail)
+                .HasMaxLength(150)
                 .IsUnicode(false)
-                .HasColumnName("CC");
+                .HasColumnName("GMAIL");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("NAME");
-            entity.Property(e => e.Nif)
-                .HasMaxLength(20)
+            entity.Property(e => e.Nif).HasColumnName("NIF");
+            entity.Property(e => e.Password)
+                .HasMaxLength(150)
                 .IsUnicode(false)
-                .HasColumnName("NIF");
+                .HasColumnName("PASSWORD");
             entity.Property(e => e.Phone)
                 .HasMaxLength(15)
                 .IsUnicode(false)
