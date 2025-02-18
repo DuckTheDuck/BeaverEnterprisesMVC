@@ -9,43 +9,74 @@
     <link rel="stylesheet" href="~/css/Register.css">
     <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+
+
 </head>
 <body>
 
-    <!-- Signup Form -->
-    <div class="centered-form-Gabriel-Login">
-        <div class="form-Gabriel-Login">
-            <div class="form-content-Gabriel-Login">
-                <header>Signup</header>
-                <form action="#">
-                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                        <input type="email" placeholder="Email" class="input-Gabriel-Login">
+    <div class="image-Gabriel-Register">
+        <!-- Hero Section -->
+        <div class="herov2">
+            <div class="navbarcustom">
+                <a href="#" class="airline">Airline</a>
+                <div class="leftnavbarcustom">
+                    <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                    <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                    <div class="navitem"><a href="#">Contact</a></div>
+                </div>
+            </div>
+        </div>
+ 
+            <div class="centered-form-Gabriel-Login">
+                <div class="form-Gabriel-Login">
+                    <div class="form-content-Gabriel-Login">
+                        <header>Signup</header>
+                        <form action="#">
+                            <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                                <input type="email" placeholder="Email" class="input-Gabriel-Login">
+                            </div>
+                            <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                                <input type="text" placeholder="Username" class="input-Gabriel-Login">
+                            </div>                            
+                            <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                                <input type="password" placeholder="Password" class="password-Gabriel-Login">
+                                <i class='bx bx-hide eye-icon-Gabriel-Login'></i>
+                            </div>
+                            <div class="field-Gabriel-Login button-field-Gabriel-Login">
+                                <button>Signup</button>
+                            </div>
+                        </form>
+                        <div class="form-link-Gabriel-Login">
+                            <span>Already have an account? <a href="@Url.Action("Login", "Home")" class="link-Gabriel-Login login-link-Gabriel-Login">Login</a></span>
+                        </div>
                     </div>
-                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                        <input type="text" placeholder="Username" class="input-Gabriel-Login">
-                    </div>
-                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                        <input type="text" placeholder="Phone" class="input-Gabriel-Login">
-                    </div>
-                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                        <input type="text" placeholder="Address" class="input-Gabriel-Login">
-                    </div>
-                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                        <input type="password" placeholder="Password" class="password-Gabriel-Login">
-                        <i class='bx bx-hide eye-icon-Gabriel-Login'></i>
-                    </div>
-                    <div class="field-Gabriel-Login button-field-Gabriel-Login">
-                        <button>Signup</button>
-                    </div>
-                </form>
-                <div class="form-link-Gabriel-Login">
-                    <span>Already have an account? <a href="@Url.Action("Login", "Home")" class="link-Gabriel-Login login-link-Gabriel-Login">Login</a></span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Signup Form -->
+   
+
+    @await Html.PartialAsync("_Footer")
+
     <!-- JavaScript -->
     <script src="~/js/Design.js"></script>
+    <style>
+
+        .image-Gabriel-Register {
+            background-image: url('/images/CastorRioDeJaneiro.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 60px;
+            overflow: hidden;
+            margin: 50px;
+            position: relative;
+            height: 600px;
+        }
+
+    </style>
 </body>
 </html>

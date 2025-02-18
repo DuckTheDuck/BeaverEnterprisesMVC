@@ -27,12 +27,25 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
+        public IActionResult BookingAvailabilityReturn()
+        {
+            return View();
+        }
+        public IActionResult Cart()
+        {
+            return View();
+        }
         public IActionResult CheckIn()
         {
             return View();
         }
 
-        public IActionResult Login_Register()
+        public IActionResult Regsister()
+        {
+            return View();
+        }
+
+        public IActionResult Login()
         {
             return View();
         }

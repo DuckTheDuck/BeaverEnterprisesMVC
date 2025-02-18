@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
     <div class="image-Simao-Booking">
         <!-- Hero Section -->
         <div class="herov2">
@@ -31,13 +30,13 @@
         </div>
     </div>
     <div class="container mt-4">
-        <h2>Please select your departure</h2>
-        <h4>Lisbon to Geneva</h4>
+        <h2>Please select your return</h2>
+        <h4>Geneva to Lisbon</h4>
         <div class="flight-card">
             <div class="flight-header">
                 <div>
                     <div class="flight-time">19:55</div>
-                    <div class="text-muted">LIS - Terminal 1</div>
+                    <div class="text-muted">CDG - Terminal 1</div>
                 </div>
                 <div>
                     <div class="flight-duration">6h 45m BRU</div>
@@ -45,7 +44,7 @@
                 </div>
                 <div>
                     <div class="flight-time">07:30 +1 day</div>
-                    <div class="text-muted">CDG - Terminal 1</div>
+                    <div class="text-muted">LIS - Terminal 1</div>
                 </div>
                 <div class="flight-airline">
                     ✈ Operated by TAP Air Portugal, Brussels Airlines
@@ -77,7 +76,7 @@
             <div class="flight-header">
                 <div>
                     <div class="flight-time">20:55</div>
-                    <div class="text-muted">LIS - Terminal 1</div>
+                    <div class="text-muted">GEN - Terminal 1</div>
                 </div>
                 <div>
                     <div class="flight-duration">6h 45m BRU</div>
@@ -85,7 +84,7 @@
                 </div>
                 <div>
                     <div class="flight-time">08:30 +1 day</div>
-                    <div class="text-muted">CDG - Terminal 1</div>
+                    <div class="text-muted">LIS - Terminal 1</div>
                 </div>
                 <div class="flight-airline">
                     ✈ Operated by TAP Air Portugal, Brussels Airlines
@@ -131,10 +130,10 @@
             // Adiciona a classe "selected" apenas ao elemento clicado
             element.classList.add('selected');
         }
-        function confirmSelection() {
+            function confirmSelection() {
             let selected = document.querySelector('.price-box.selected');
             if (selected) {
-                window.location.href = '@Url.Action("BookingAvailabilityReturn", "Home")';
+                window.location.href = '@Url.Action("Cart", "Home")';
             } else {
                 alert("Por favor, seleciona uma classe antes de continuar!");
             }

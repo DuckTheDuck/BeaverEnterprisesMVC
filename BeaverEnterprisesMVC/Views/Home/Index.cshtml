@@ -1,63 +1,78 @@
-﻿
-<div class="image">
-    <!-- Hero Section -->
-    <div class="herov2">
-        <div class="navbarcustom">
-            <a href="#" class="airline">Airline</a>
-            <div class="leftnavbarcustom">
-                <div class="navitem"><a href="@Url.Action("LoginRegister", "Account")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
-                <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
-                <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
-                <div class="navitem"><a href="#">Contact</a></div>
-            </div>
-        </div>
-    </div>
-    <div class="hero">
+﻿﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Homepage</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        @await Html.PartialAsync("_MainLayout")
-    </div>
-</div>
-<!-- Promotions -->
-<div class="container mt-5">
-    <h3>Special Offers</h3>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <img src="https://source.unsplash.com/400x300/?travel" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Europe Getaway</h5>
-                    <p class="card-text">Fly to Europe at great prices!</p>
-                    <a href="#" class="btn btn-primary">Book Now</a>
+    <script src="~/site.js/airport-autocomplete.js"></script>
+
+</head>
+<body>
+
+
+    <div class="image">
+        <!-- Hero Section -->
+        <div class="herov2">
+            <div class="navbarcustom">
+                <a href="#" class="airline">Airline</a>
+                <div class="leftnavbarcustom">
+                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                    <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                    <div class="navitem"><a href="#">Contact</a></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img src="https://source.unsplash.com/400x300/?beach" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Tropical Escape</h5>
-                    <p class="card-text">Enjoy sunny beaches this season.</p>
-                    <a href="#" class="btn btn-primary">Book Now</a>
+        <div class="hero">
+
+            @await Html.PartialAsync("_MainLayout")
+        </div>
+    </div>
+    <!-- Promotions -->
+    <div class="container mt-5">
+        <h3>Special Offers</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://source.unsplash.com/400x300/?travel" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Europe Getaway</h5>
+                        <p class="card-text">Fly to Europe at great prices!</p>
+                        <a href="#" class="btn btn-primary">Book Now</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img src="https://source.unsplash.com/400x300/?city" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">City Adventures</h5>
-                    <p class="card-text">Explore vibrant cities worldwide.</p>
-                    <a href="#" class="btn btn-primary">Book Now</a>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://source.unsplash.com/400x300/?beach" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Tropical Escape</h5>
+                        <p class="card-text">Enjoy sunny beaches this season.</p>
+                        <a href="#" class="btn btn-primary">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://source.unsplash.com/400x300/?city" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">City Adventures</h5>
+                        <p class="card-text">Explore vibrant cities worldwide.</p>
+                        <a href="#" class="btn btn-primary">Book Now</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@await Html.PartialAsync("_Footer")
+    @await Html.PartialAsync("_Footer")
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
