@@ -28,10 +28,19 @@
                 </div>
             </div>
         </div>
-        <div class="hero">
 
+        <!-- Botão colocado fora da herov2 -->
+        <div class="mid-button">
+            <a  href="@Url.Action("SpecialOffers", "Home")" class="cta-button">Ver Ofertas</a>
+            <a  href="@Url.Action("SpecialOffers", "Home")" class="cta-button">Ver Ofertas</a>
+            <a  href="@Url.Action("SpecialOffers", "Home")" class="cta-button">Ver Ofertas</a>
+        </div>
+
+        <div class="hero">
             @await Html.PartialAsync("_MainLayout")
         </div>
+
+
     </div>
     <!-- Promotions -->
     <div class="container mt-5">

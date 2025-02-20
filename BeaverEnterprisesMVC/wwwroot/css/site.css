@@ -546,4 +546,40 @@ a.google-Gabriel-Login {
     width: 100%;
 }
 
+.mid-button {
+    display: flex;
+    justify-content: center;
+    position: absolute; /* Ajuste para absoluto */
+    top: 200px; /* Pode alterar conforme necessário */
+    left: 50%;
+    transform: translateX(-50%); /* Isso centraliza o botão horizontalmente */
+    z-index: 100;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: fit-content;
+}
+
+
+
+.cta-button {
+    background-color: rgb(130, 89, 46);
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+
+    border-radius: 9999px;
+    margin: 5px; /* Adiciona um leve destaque */
+}
+
+    .cta-button:hover {
+        background-color: rgb(110, 70, 35);
+    }
+
+
 /*Fim do css do Gabriel*/
