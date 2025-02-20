@@ -11,12 +11,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-    <div class="image-Simao-Booking">
-        <!-- Hero Section -->
+    
+    <div class="centerBookingHeaad">
         <div class="herov2">
             <div class="navbarcustom">
-                <a href="#" class="airline">Airline</a>
+                <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
                 <div class="leftnavbarcustom">
                     <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
                     <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
@@ -25,11 +24,18 @@
                 </div>
             </div>
         </div>
-        <div class="hero">
-
+    </div>
+    <div class="modify-section">
+        <div class=" centerBookingHeaad">
             @await Html.PartialAsync("_MainLayout")
         </div>
     </div>
+    <div class="centerBttBookingHead">
+        <button class="btn-modify-booking" onclick="toggleModify()">
+            <i id="modify-icon" class="fas fa-chevron-down"></i> Modify
+        </button>
+    </div>
+
     <div class="container mt-4">
         <h2>Please select your departure</h2>
         <h4>Lisbon to Geneva</h4>
@@ -112,7 +118,7 @@
         </div>
     </div>
     <div class="container text-end mt-4">
-        <button class="btn-primary" onclick="confirmSelection()">Select</button>
+        <button class="btn-primary-booking-search" onclick="confirmSelection()">Select</button>
     </div>
     <footer class="footer text-center">
         <p>&copy; 2025 Airline. All Rights Reserved.</p>
@@ -139,6 +145,26 @@
                 alert("Por favor, seleciona uma classe antes de continuar!");
             }
         }
+
+        function toggleModify() {
+            let section = document.querySelector(".modify-section");
+            let icon = document.getElementById("modify-icon");
+
+            if (section.classList.contains("show")) {
+                section.classList.remove("show");
+                setTimeout(() => {
+                    section.style.display = "none";
+                }, 400);
+            } else {
+                section.style.display = "block";
+                setTimeout(() => {
+                    section.classList.add("show");
+                }, 10);
+            }
+
+            // Alterna a classe rotate sempre que o botão for clicado
+            icon.classList.toggle("rotate");
+        }
     </script>
     <style>
 
@@ -153,6 +179,102 @@
             position: relative;
             height: 600px;
         }
-    </style>
+
+        .airline-do-Simao {
+            font-size: 24px;
+            font-weight: bold;
+            color: rgb(130, 89, 46);
+            align-content: center;
+        }
+        .modify-section {
+    display: none;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    padding: 15px;
+    background: #fff;
+    border-radius: 10px;
+    position: relative;
+}
+
+.modify-section.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.modify-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.modify-btn:hover {
+    background: #ffcc00;
+    transform: scale(1.05);
+}
+
+        #modify-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .rotate {
+            transform: rotate(180deg);
+        }
+
+        .navbarcustombooking {
+            display: flex;
+            
+            background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: rgb(130, 89, 46);
+            width: 100%;
+            max-width: 1250px;
+            position: relative;
+            margin-top: 1%
+        }
+
+        .centerBookingHeaad {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 20vh;
+            width: 100%;
+        }
+
+        .centerBttBookingHead {
+            display: flex;
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+            height: 10vh; /* Define a altura da tela toda */
+            color: rgb(130, 89, 46);
+        }
+
+        .btn-modify-booking{
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(130, 89, 46);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .btn-primary-booking-search
+        {
+            background-color: rgb(130, 89, 46);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        </style>
 </body>
 </html>
