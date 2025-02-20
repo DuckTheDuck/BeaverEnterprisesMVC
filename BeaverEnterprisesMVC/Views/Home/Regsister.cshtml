@@ -20,39 +20,16 @@
             <div class="navbarcustom">
                 <a href="#" class="airline">Airline</a>
                 <div class="leftnavbarcustom">
-                    <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
                     <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
                     <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
                     <div class="navitem"><a href="#">Contact</a></div>
                 </div>
             </div>
         </div>
- 
-            <div class="centered-form-Gabriel-Login">
-                <div class="form-Gabriel-Login">
-                    <div class="form-content-Gabriel-Login">
-                        <header>Signup</header>
-                        <form action="#">
-                            <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                                <input type="email" placeholder="Email" class="input-Gabriel-Login">
-                            </div>
-                            <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                                <input type="text" placeholder="Username" class="input-Gabriel-Login">
-                            </div>                            
-                            <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                                <input type="password" placeholder="Password" class="password-Gabriel-Login">
-                                <i class='bx bx-hide eye-icon-Gabriel-Login'></i>
-                            </div>
-                            <div class="field-Gabriel-Login button-field-Gabriel-Login">
-                                <button>Signup</button>
-                            </div>
-                        </form>
-                        <div class="form-link-Gabriel-Login">
-                            <span>Already have an account? <a href="@Url.Action("Login", "Home")" class="link-Gabriel-Login login-link-Gabriel-Login">Login</a></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="herov3">
+
+            @await Html.PartialAsync("_Login")
         </div>
     </div>
 
@@ -64,6 +41,18 @@
     <!-- JavaScript -->
     <script src="~/js/Design.js"></script>
     <style>
+        .herov3{
+            background: url('https://source.unsplash.com/1600x900/?airplane,airport') center/cover;
+            display: flex;
+            align-items: flex-end; /* Alinha o conteúdo da hero ao fundo */
+            justify-content: center;
+            text-align: center;
+            color: rgb(130, 89, 46);
+            position: absolute; /* Faz com que a hero se posicione dentro da .image */
+            bottom: 0; /* Posiciona a hero na parte inferior da .image */
+            width: 100%; /* Garante que a hero ocupe toda a largura da imagem */
+            margin-bottom: 50px; /* Garante que a hero ocupe toda a largura da imagem */ /* Remove o margin-bottom, pois a hero já está posicionada */
+        }
 
         .image-Gabriel-Register {
             background-image: url('/images/CastorRioDeJaneiro.png');

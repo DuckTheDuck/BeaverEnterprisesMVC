@@ -1,35 +1,37 @@
-﻿<div class="search-box">
-    <h2>Find Your Flight</h2>
+﻿<form id="bookingForm" action="/Home/BookingAvailability" method="post" onsubmit="return validateForm()">
+    <div class="search-box">
+        <h2>Find Your Flight</h2>
 
 
-    <div class="margin">
-        <div class="divider">
-            <label for="departure">Origem</label>
-            <input type="text" class="form-control" id="airport-input-Origin" placeholder="Origin">
-            <div class="suggestions">
-                @await Html.PartialAsync("_AirportsSuggestionsOrigin")
+        <div class="margin">
+            <div class="divider">
+                <label for="departure">Origem</label>
+                <input type="text" class="form-control" name="Origin" id="airport-input-Origin" placeholder="Origin">
+                <div class="suggestions">
+                    @await Html.PartialAsync("_AirportsSuggestionsOrigin")
+                </div>
             </div>
-        </div>
 
-        <div class="divider">
-            <label for="departure">Destino</label>
-            <input type="text" class="form-control" id="airport-input-Destination" placeholder="Destination">
-            <div class="suggestions">
-                @await Html.PartialAsync("_AirportsSuggestionsDestination")
+            <div class="divider">
+                <label for="departure">Destino</label>
+                <input type="text" class="form-control" name="Destination" id="airport-input-Destination" placeholder="Destination">
+                <div class="suggestions">
+                    @await Html.PartialAsync("_AirportsSuggestionsDestination")
+                </div>
             </div>
-        </div>
 
-        <div class="divider">
-            <label for="departure">Partida</label>
-            <input type="date" class="form-control" id="departure">
-        </div>
+            <div class="divider">
+                <label for="departure">Partida</label>
+                <input type="date" class="form-control" name="Departure" id="departure">
+            </div>
 
-        <div class="divider">
-            <label for="arrival">Chegada</label>
-            <input type="date" class="form-control" id="arrival">
+            <div class="divider">
+                <label for="arrival">Chegada</label>
+                <input type="date" class="form-control" name="Arrival" id="arrival">
+            </div>
+            <input type="submit" class="bttpesquisar" value="Pesquisar" id="bttbooking">
+
         </div>
-        <input type="submit" class="bttpesquisar" value="Pesquisar">
 
     </div>
-
-</div>
+</form>

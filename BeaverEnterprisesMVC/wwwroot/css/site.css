@@ -44,7 +44,7 @@ body {
     position: absolute; /* Faz com que a hero se posicione dentro da .image */
     bottom: 0; /* Posiciona a hero na parte inferior da .image */
     width: 100%; /* Garante que a hero ocupe toda a largura da imagem */
-    margin-bottom: 150px; /* Remove o margin-bottom, pois a hero já está posicionada */
+    margin-bottom: 150px; 
 }
 
 
@@ -361,12 +361,12 @@ h3 {
 }
 
 .form-Gabriel-Login {
-    position: absolute;
     max-width: 430px;
     width: 100%;
     padding: 30px;
     border-radius: 6px;
-    background: #FFF;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
     .form-Gabriel-Login.signup {
@@ -542,7 +542,7 @@ a.google-Gabriel-Login {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin-top: 10%;
     width: 100%;
 }
 

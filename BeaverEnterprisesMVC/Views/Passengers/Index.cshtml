@@ -22,10 +22,16 @@
                 @Html.DisplayNameFor(model => model.Phone)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cc)
+                @Html.DisplayNameFor(model => model.Nif)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nif)
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Password)
             </th>
             <th></th>
         </tr>
@@ -43,21 +49,21 @@
                 @Html.DisplayFor(modelItem => item.Phone)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cc)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Nif)
             </td>
             <td>
-                    <form method="get" asp-action="Edit" asp-route-id="@item.Id" style="display:inline;">
-                        <button type="submit" class="btn btn-primary bttbackend">Edit</button>
-                    </form>
-                    <form method="get" asp-action="Details" asp-route-id="@item.Id" style="display:inline;">
-                        <button type="submit" class="btn btn-info bttbackend">Details</button>
-                    </form>
-                    <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
-                        <button type="submit" class="btn btn-danger bttbackend">Delete</button>
-                    </form>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
