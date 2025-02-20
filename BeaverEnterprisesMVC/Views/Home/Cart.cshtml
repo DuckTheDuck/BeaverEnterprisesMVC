@@ -12,26 +12,19 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="@Url.Action("Index", "Home")">Airline</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link login-btn" href="@Url.Action("LoginRegister", "Account")">
-                            <i class="fas fa-user-circle"></i> Login & Registration
-                        </a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingAvailability", "Home")">Book</a></li>
-                    <li class="nav-item"><a class="nav-link" href="@Url.Action("CheckIn", "Home")">Check-In</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                </ul>
+    <div class="centerBookingHeaad">
+        <div class="herov2">
+            <div class="navbarcustom">
+                <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
+                <div class="leftnavbarcustom">
+                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                    <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                    <div class="navitem"><a href="#">Contact</a></div>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
     <div class="container mt-4">
         <h2>Your Selection</h2>
         <h4>Geneva to Lisbon</h4>
@@ -93,7 +86,7 @@
     <div class="container text-end mt-4">
         <h3>Total price:EUR 805.01</h3>
         <p>Round trip price for all passengers (incl. taxes, fees and surcharges)</p>
-        <button class="btn-primary" onclick="confirmSelection()">Select</button>
+        <button class="btn-primary-booking-search" onclick="confirmSelection()">Select</button>
     </div>
     <div class="container mt-4">
         <p>Fares are not guaranteed until you confirm your purchase by clicking the “Yes, book and pay for ticket” button.**</p>
@@ -107,5 +100,44 @@
     <footer class="footer text-center">
         <p>&copy; 2025 Airline. All Rights Reserved.</p>
     </footer>
+
+    <style>
+        .navbarcustombooking {
+            display: flex;
+            background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: rgb(130, 89, 46);
+            width: 100%;
+            max-width: 1250px;
+            position: relative;
+            margin-top: 1%
+        }
+
+        .centerBookingHeaad {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 20vh;
+            width: 100%;
+        }
+
+        .btn-primary-booking-search {
+            background-color: rgb(130, 89, 46);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .airline-do-Simao {
+            font-size: 24px;
+            font-weight: bold;
+            color: rgb(130, 89, 46);
+            align-content: center;
+        }
+    </style>
 </body>
 </html>
