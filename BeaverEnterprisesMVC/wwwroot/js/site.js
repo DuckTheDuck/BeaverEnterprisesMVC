@@ -1,4 +1,21 @@
 ﻿
+function changeView(event, view) {
+    // Remover a classe 'active' de todos os botões
+    document.querySelectorAll('.cta-button').forEach(btn => btn.classList.remove('active'));
+
+    // Adicionar a classe 'active' ao botão clicado
+    event.target.classList.add('active');
+
+    // Se for uma Partial View, faz uma requisição AJAX
+    if (view === '_MainLayout' || view === '_Login') {
+        fetch('/Home/GetPartialView?viewName=' + view) // Substitua pela URL correta
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('shared-view').innerHTML = html;
+            })
+            .catch(error => console.error('Erro ao carregar a Partial View:', error));
+    } 
+}
 
 $(document).ready(function () {
 
@@ -45,7 +62,7 @@ function validateForm() {
     if (departureDate < today) {alert("A data de partida não pode ser inferior à data de hoje!");return false;}
     if (arrivalDate < departureDate) {alert("A data de chegada não pode ser antes da data de partida!");return false;}
 
-    return true; // Permite o envio do formulário
+    return true; 
 }
 
 

@@ -49,7 +49,10 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
-
+        public IActionResult GetPartialView(string viewName)
+        {
+            return PartialView(viewName);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

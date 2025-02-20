@@ -31,13 +31,13 @@
 
         <!-- Botão colocado fora da herov2 -->
         <div class="mid-button">
-            <a  href="@Url.Action("SpecialOffers", "Home")" class="cta-button">Ver Ofertas</a>
-            <a  href="@Url.Action("SpecialOffers", "Home")" class="cta-button">Ver Ofertas</a>
-            <a  href="@Url.Action("SpecialOffers", "Home")" class="cta-button">Ver Ofertas</a>
+            <a href="#" class="cta-button active" onclick="changeView(event, '_MainLayout')">Reservar voo</a>
+            <a href="#" class="cta-button" onclick="changeView(event, '_Login')">Fazer Check-in</a>
         </div>
 
-        <div class="hero">
-            @await Html.PartialAsync("_MainLayout")
+        <!-- Área onde a view será alterada -->
+        <div id="shared-view">
+            <p>Conteúdo inicial - Escolha uma opção acima.</p>
         </div>
 
 

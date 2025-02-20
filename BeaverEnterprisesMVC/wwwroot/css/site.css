@@ -569,17 +569,20 @@ a.google-Gabriel-Login {
     font-size: 18px;
     font-weight: bold;
     text-decoration: none;
-    border-radius: 8px;
-    transition: 0.3s;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-
     border-radius: 9999px;
-    margin: 5px; /* Adiciona um leve destaque */
+    transition: 0.3s;
+    margin: 5px;
+    cursor: pointer;
 }
 
     .cta-button:hover {
         background-color: rgb(110, 70, 35);
     }
+
+    .cta-button.active {
+        background-color: rgb(34, 139, 34); /* Verde para indicar ativo */
+    }
+
 
 
 /*Fim do css do Gabriel*/
