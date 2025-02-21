@@ -7,7 +7,7 @@ function changeView(event, view) {
     event.target.classList.add('active');
 
     // Se for uma Partial View, faz uma requisição AJAX
-    if (view === '_MainLayout' || view === '_Login') {
+    if (view === '_Register' || view === '_Login') {
         fetch('/Home/GetPartialView?viewName=' + view) // Substitua pela URL correta
             .then(response => response.text())
             .then(html => {
@@ -16,6 +16,25 @@ function changeView(event, view) {
             .catch(error => console.error('Erro ao carregar a Partial View:', error));
     } 
 }
+
+function changeViewLogin(e, view) {
+    e.preventDefault(); // Evita que o link recarregue a página
+
+    // Remove a classe 'active' de todos os botões
+    document.querySelectorAll('.cta-button').forEach(btn => btn.classList.remove('active'));
+
+    // Adiciona a classe 'active' ao botão clicado
+    e.target.classList.add('active');
+
+    // Carrega a nova Shared View e substitui a atual
+    fetch('/Home/GetPartialView?viewName=' + view)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('shared-view').innerHTML = html; // Substitui o conteúdo
+        })
+        .catch(error => console.error('Erro ao carregar a Partial View:', error));
+}
+
 
 $(document).ready(function () {
 
@@ -96,6 +115,7 @@ function suggest(input, suggestion) {
 }
 
 //Javascrip do Login Gabriel
+
 
 const forms = document.querySelector(".forms"),
     pwShowHide = document.querySelectorAll(".eye-icon"),

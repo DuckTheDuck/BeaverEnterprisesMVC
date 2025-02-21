@@ -9,12 +9,8 @@
     <link rel="stylesheet" href="~/css/Register.css">
     <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
-
-
 </head>
 <body>
-
-  
         <div class="centered-form-Gabriel-Login">
             <div class="form-Gabriel-Login">
                 <div class="form-content-Gabriel-Login">
@@ -33,6 +29,7 @@
                         <div class="field-Gabriel-Login button-field-Gabriel-Login">
                             <button>Signup</button>
                         </div>
+                    @await Html.PartialAsync("_Login")
                     </form>
                     <div class="form-link-Gabriel-Login">
                         <span>Already have an account? <a href="@Url.Action("Login", "Home")" class="link-Gabriel-Login login-link-Gabriel-Login">Login</a></span>
@@ -42,6 +39,8 @@
         </div>
 
    
+
+
     <!-- JavaScript -->
     <script src="~/js/Design.js"></script>
 </body>
