@@ -1,3 +1,4 @@
+
 using System.Diagnostics;
 using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;

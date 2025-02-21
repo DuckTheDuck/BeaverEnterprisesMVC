@@ -1,5 +1,19 @@
-﻿
+﻿document.addEventListener("DOMContentLoaded", function () {
+    // Delegação de evento para garantir que os botões funcionem mesmo após mudanças de página
+    document.addEventListener("click", function (event) {
+        if (event.target.classList.contains("cta-button")) {
+            changeView(event, '_MainLayout');
+        }
+    });
+
+    // Chama a função changeView inicialmente
+    changeView({ target: document.querySelector(".cta-button.active") }, '_MainLayout');
+});
+
 function changeView(event, view) {
+    // Verifica se event.target é válido antes de tentar acessar classList
+    if (!event.target) return;
+
     // Remover a classe 'active' de todos os botões
     document.querySelectorAll('.cta-button').forEach(btn => btn.classList.remove('active'));
 
@@ -8,40 +22,28 @@ function changeView(event, view) {
 
     // Se for uma Partial View, faz uma requisição AJAX
     if (view === '_MainLayout' || view === '_Login') {
-        fetch('/Home/GetPartialView?viewName=' + view) // Substitua pela URL correta
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('shared-view').innerHTML = html;
-            })
-            .catch(error => console.error('Erro ao carregar a Partial View:', error));
-    } 
+        $.get("/Home/GetPartialView", { viewName: view }, function (data) {
+            document.getElementById('shared-view').innerHTML = data;
+
+
+            // Aguarda um pequeno tempo para garantir que o HTML foi atualizado antes de adicionar eventos
+            setTimeout(() => {
+                const origin = document.getElementById("airport-input-Origin");
+                const destination = document.getElementById("airport-input-Destination");
+
+                if (origin) {
+                    origin.addEventListener("input", () => suggest(origin, "suggestionsOrigin"));
+                }
+                if (destination) {
+                    destination.addEventListener("input", () => suggest(destination, "suggestionsDestination"));
+                }
+            }, 200);
+        });
+    }
 }
 
-$(document).ready(function () {
 
-    const origin = document.getElementById("airport-input-Origin"); 
-    const destination = document.getElementById("airport-input-Destination");
 
-    origin.addEventListener("input", () => {
-
-        suggest(origin, "suggestionsOrigin");
-
-    });
-
-    destination.addEventListener("input", () => {
-
-        suggest(destination, "suggestionsDestination");
-
-    });
-
-    $(document).click(function (event) {
-        if (!$("#airport-input").is(event.target) && !$("#suggestions").is(event.target) && $("#suggestions").has(event.target).length === 0) {
-            $("#suggestions").hide();
-        }
-    });
-
-    
-});
 
 function validateForm() {
 
