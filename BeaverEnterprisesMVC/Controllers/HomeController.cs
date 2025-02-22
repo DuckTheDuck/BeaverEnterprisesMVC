@@ -1,6 +1,8 @@
+
 using System.Diagnostics;
 using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -8,9 +10,12 @@ namespace BeaverEnterprisesMVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly BeaverEnterprisesContext _context;
+    
+        public HomeController(ILogger<HomeController> logger, BeaverEnterprisesContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -44,11 +49,6 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
-
-        public IActionResult Login()
-        {
-            return View();
-        }
         public IActionResult GetPartialView(string viewName)
         {
             return PartialView(viewName);
@@ -59,6 +59,33 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
        
+        [HttpPost]
+
+        public IActionResult Login(string email, string password)
+        {
+            if (email == "admin@gmail.com" && password == "admin")
+            {
+                return RedirectToAction("Create", "Manufacturers");
+            }
+
+            var user = _context.Passengers.FirstOrDefault(u => u.Gmail == email && u.Password == password);
+            if (user != null)
+            {
+                HttpContext.Session.SetInt32("CurrentUserID", user.Id);
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewBag.Error = "Invalid username or password.";
+            return View();
+        }
+
+
+
+
+
+
+
     }
 }

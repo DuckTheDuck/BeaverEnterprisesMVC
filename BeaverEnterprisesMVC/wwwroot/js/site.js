@@ -1,5 +1,15 @@
-﻿
+﻿document.addEventListener("DOMContentLoaded", function () {
+    // Delegação de evento para garantir que os botões funcionem mesmo após mudanças de página
+
+
+    // Chama a função changeView inicialmente
+    changeView({ target: document.querySelector(".cta-button.active.index") }, '_MainLayout');
+});
+
 function changeView(event, view) {
+    // Verifica se event.target é válido antes de tentar acessar classList
+    if (!event.target) return;
+
     // Remover a classe 'active' de todos os botões
     document.querySelectorAll('.cta-button').forEach(btn => btn.classList.remove('active'));
 
@@ -7,60 +17,67 @@ function changeView(event, view) {
     event.target.classList.add('active');
 
     // Se for uma Partial View, faz uma requisição AJAX
-    if (view === '_Register' || view === '_Login') {
-        fetch('/Home/GetPartialView?viewName=' + view) // Substitua pela URL correta
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('shared-view').innerHTML = html;
-            })
-            .catch(error => console.error('Erro ao carregar a Partial View:', error));
-    } 
+    if (view === '_MainLayout' || view === '_Login') {
+        $.get("/Home/GetPartialView", { viewName: view }, function (data) {
+            document.getElementById('shared-view').innerHTML = data;
+
+
+            // Aguarda um pequeno tempo para garantir que o HTML foi atualizado antes de adicionar eventos
+            setTimeout(() => {
+                const origin = document.getElementById("airport-input-Origin");
+                const destination = document.getElementById("airport-input-Destination");
+
+                if (origin) {
+                    origin.addEventListener("input", () => suggest(origin, "suggestionsOrigin"));
+                }
+                if (destination) {
+                    destination.addEventListener("input", () => suggest(destination, "suggestionsDestination"));
+                }
+            }, 200);
+        });
+    }
 }
 
-function changeViewLogin(e, view) {
-    e.preventDefault(); // Evita que o link recarregue a página
+function changeViewLoginRegister(event, view) {
+    if (!event.target) return;
 
-    // Remove a classe 'active' de todos os botões
+    // Remover a classe 'active' de todos os botões
     document.querySelectorAll('.cta-button').forEach(btn => btn.classList.remove('active'));
 
-    // Adiciona a classe 'active' ao botão clicado
-    e.target.classList.add('active');
+    // Adicionar a classe 'active' ao botão clicado
+    event.target.classList.add('active');
 
-    // Carrega a nova Shared View e substitui a atual
-    fetch('/Home/GetPartialView?viewName=' + view)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('shared-view').innerHTML = html; // Substitui o conteúdo
+    // Seleciona a div principal onde a view será carregada
+    const sharedView = document.getElementById('shared-view');
+
+    // Remove todos os event listeners anteriores limpando o innerHTML corretamente
+    sharedView.replaceChildren(); // Remove todos os elementos filhos da div
+
+    // Carregar a nova Partial View
+    $.get("/Home/GetPartialView", { viewName: view })
+        .done(function (data) {
+            sharedView.innerHTML = data; // Insere a nova view corretamente
+
+            // Aguarda um curto tempo para garantir que os elementos foram adicionados ao DOM
+            setTimeout(() => {
+                const origin = document.getElementById("airport-input-Origin");
+                const destination = document.getElementById("airport-input-Destination");
+
+                if (origin) {
+                    origin.addEventListener("input", () => suggest(origin, "suggestionsOrigin"));
+                }
+                if (destination) {
+                    destination.addEventListener("input", () => suggest(destination, "suggestionsDestination"));
+                }
+            }, 200);
         })
-        .catch(error => console.error('Erro ao carregar a Partial View:', error));
+        .fail(function () {
+            console.error("Erro ao carregar a partial view:", view);
+            sharedView.innerHTML = "<p>Erro ao carregar a página. Tente novamente.</p>";
+        });
 }
 
 
-$(document).ready(function () {
-
-    const origin = document.getElementById("airport-input-Origin"); 
-    const destination = document.getElementById("airport-input-Destination");
-
-    origin.addEventListener("input", () => {
-
-        suggest(origin, "suggestionsOrigin");
-
-    });
-
-    destination.addEventListener("input", () => {
-
-        suggest(destination, "suggestionsDestination");
-
-    });
-
-    $(document).click(function (event) {
-        if (!$("#airport-input").is(event.target) && !$("#suggestions").is(event.target) && $("#suggestions").has(event.target).length === 0) {
-            $("#suggestions").hide();
-        }
-    });
-
-    
-});
 
 function validateForm() {
 
@@ -69,19 +86,19 @@ function validateForm() {
     var departure = document.getElementById("departure").value;
     var arrival = document.getElementById("arrival").value;
 
-    if (!origin || !destination || !departure || !arrival) {alert("Por favor, preencha todos os campos antes de continuar!");return false;}
-    if (origin === destination) {alert("Não podes ter o mesmo local para origem e destino!"); return false;}
+    if (!origin || !destination || !departure || !arrival) { alert("Por favor, preencha todos os campos antes de continuar!"); return false; }
+    if (origin === destination) { alert("Não podes ter o mesmo local para origem e destino!"); return false; }
 
-    var today = new Date();  
-    today.setHours(0, 0, 0, 0); 
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    var departureDate = new Date(departure + "T00:00:00"); 
+    var departureDate = new Date(departure + "T00:00:00");
     var arrivalDate = new Date(arrival + "T00:00:00");
 
-    if (departureDate < today) {alert("A data de partida não pode ser inferior à data de hoje!");return false;}
-    if (arrivalDate < departureDate) {alert("A data de chegada não pode ser antes da data de partida!");return false;}
+    if (departureDate < today) { alert("A data de partida não pode ser inferior à data de hoje!"); return false; }
+    if (arrivalDate < departureDate) { alert("A data de chegada não pode ser antes da data de partida!"); return false; }
 
-    return true; 
+    return true;
 }
 
 
@@ -113,34 +130,3 @@ function suggest(input, suggestion) {
         });
     }
 }
-
-//Javascrip do Login Gabriel
-
-
-const forms = document.querySelector(".forms"),
-    pwShowHide = document.querySelectorAll(".eye-icon"),
-    links = document.querySelectorAll(".link");
-// Add click event listener to each eye icon for toggling password visibility
-pwShowHide.forEach(eyeIcon => {
-    eyeIcon.addEventListener("click", () => {
-        let pwFields = eyeIcon.parentElement.parentElement.querySelectorAll(".password");
-        pwFields.forEach(password => {
-            if (password.type === "password") { // If password is hidden
-                password.type = "text"; // Show password
-                eyeIcon.classList.replace("bx-hide", "bx-show"); // Change icon to show state
-                return;
-            }
-            password.type = "password"; // Hide password
-            eyeIcon.classList.replace("bx-show", "bx-hide"); // Change icon to hide state
-        });
-    });
-});
-// Add click event listener to each link to toggle between forms
-links.forEach(link => {
-    link.addEventListener("click", e => {
-        e.preventDefault(); // Prevent default link behavior
-        forms.classList.toggle("show-signup");
-    });
-});
-
-//Fim do Javascript do Gabriel

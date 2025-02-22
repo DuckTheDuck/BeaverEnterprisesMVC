@@ -367,6 +367,7 @@ h3 {
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.7);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 60px;
 }
 
     .form-Gabriel-Login.signup {
@@ -596,6 +597,10 @@ a.google-Gabriel-Login {
         background-color: rgb(34, 139, 34); /* Verde para indicar ativo */
     }
 
+
+#registerForm {
+    display: none; /* Esconde o formulário de registro inicialmente */
+}
 
 
 /*Fim do css do Gabriel*/
