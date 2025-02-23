@@ -81,11 +81,15 @@ namespace BeaverEnterprisesMVC.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult BookingAvailability(string Origin, string Destination, string Departure, string Arrival)
+        {
+            ViewBag.Origin = Origin;
+            ViewBag.Destination = Destination;
+            ViewBag.Departure = Departure;
+            ViewBag.Arrival = Arrival;
 
-
-
-
-
-
+            return View();
+        }
     }
 }
