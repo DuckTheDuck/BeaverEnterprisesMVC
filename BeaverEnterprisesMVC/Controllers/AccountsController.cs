@@ -9,22 +9,22 @@ using BeaverEnterprisesMVC.Models;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
-    public class PassengersController : Controller
+    public class AccountsController : Controller
     {
         private readonly BeaverEnterprisesContext _context;
 
-        public PassengersController(BeaverEnterprisesContext context)
+        public AccountsController(BeaverEnterprisesContext context)
         {
             _context = context;
         }
 
-        // GET: Passengers
+        // GET: Accounts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Passengers.ToListAsync());
+            return View(await _context.Accounts.ToListAsync());
         }
 
-        // GET: Passengers/Details/5
+        // GET: Accounts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,39 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers
+            var account = await _context.Accounts
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (passenger == null)
+            if (account == null)
             {
                 return NotFound();
             }
 
-            return View(passenger);
+            return View(account);
         }
 
-        // GET: Passengers/Create
+        // GET: Accounts/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Passengers/Create
+        // POST: Accounts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Gender,SeatNumber")] Passenger passenger)
+        public async Task<IActionResult> Create([Bind("Id,Code,Password,Email")] Account account)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(passenger);
+                _context.Add(account);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(passenger);
+            return View(account);
         }
 
-        // GET: Passengers/Edit/5
+        // GET: Accounts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +72,22 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers.FindAsync(id);
-            if (passenger == null)
+            var account = await _context.Accounts.FindAsync(id);
+            if (account == null)
             {
                 return NotFound();
             }
-            return View(passenger);
+            return View(account);
         }
 
-        // POST: Passengers/Edit/5
+        // POST: Accounts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Gender,SeatNumber")] Passenger passenger)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Password,Email")] Account account)
         {
-            if (id != passenger.Id)
+            if (id != account.Id)
             {
                 return NotFound();
             }
@@ -96,12 +96,12 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 try
                 {
-                    _context.Update(passenger);
+                    _context.Update(account);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PassengerExists(passenger.Id))
+                    if (!AccountExists(account.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +112,10 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(passenger);
+            return View(account);
         }
 
-        // GET: Passengers/Delete/5
+        // GET: Accounts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,34 +123,34 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers
+            var account = await _context.Accounts
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (passenger == null)
+            if (account == null)
             {
                 return NotFound();
             }
 
-            return View(passenger);
+            return View(account);
         }
 
-        // POST: Passengers/Delete/5
+        // POST: Accounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var passenger = await _context.Passengers.FindAsync(id);
-            if (passenger != null)
+            var account = await _context.Accounts.FindAsync(id);
+            if (account != null)
             {
-                _context.Passengers.Remove(passenger);
+                _context.Accounts.Remove(account);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PassengerExists(int id)
+        private bool AccountExists(int id)
         {
-            return _context.Passengers.Any(e => e.Id == id);
+            return _context.Accounts.Any(e => e.Id == id);
         }
     }
 }

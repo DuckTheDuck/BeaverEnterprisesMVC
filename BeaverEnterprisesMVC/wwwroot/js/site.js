@@ -85,8 +85,9 @@ function validateForm() {
     var destination = document.getElementById("airport-input-Destination").value.trim();
     var departure = document.getElementById("departure").value;
     var arrival = document.getElementById("arrival").value;
+    var passegers = document.getElementById("num_passegers").value;
 
-    if (!origin || !destination || !departure || !arrival) { alert("Por favor, preencha todos os campos antes de continuar!"); return false; }
+    if (!origin || !destination || !departure || !arrival || !passegers) { alert("Por favor, preencha todos os campos antes de continuar!"); return false; }
     if (origin === destination) { alert("Não podes ter o mesmo local para origem e destino!"); return false; }
 
     var today = new Date();

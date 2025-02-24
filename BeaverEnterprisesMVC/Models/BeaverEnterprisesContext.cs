@@ -15,7 +15,11 @@ public partial class BeaverEnterprisesContext : DbContext
     {
     }
 
+    public virtual DbSet<Account> Accounts { get; set; }
+
     public virtual DbSet<Aircraft> Aircraft { get; set; }
+
+    public virtual DbSet<Cart> Carts { get; set; }
 
     public virtual DbSet<Class> Classes { get; set; }
 
@@ -33,12 +37,30 @@ public partial class BeaverEnterprisesContext : DbContext
 
     public virtual DbSet<Reservation> Reservations { get; set; }
 
+    public virtual DbSet<Ticket> Tickets { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-6ARNHA2\\MSSQLSERVER01;Database=BeaverEnterprises;Trusted_Connection=True;Persist Security Info=True;TrustServerCertificate=True;MultipleActiveResultSets=True;");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-N4C79H0;Database=BeaverEnterprises;Trusted_Connection=True;Persist Security Info=True;TrustServerCertificate=True;MultipleActiveResultSets=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Account>(entity =>
+        {
+            entity.ToTable("ACCOUNT");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Code).HasColumnName("CODE");
+            entity.Property(e => e.Email)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("EMAIL");
+            entity.Property(e => e.Password)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("PASSWORD");
+        });
+
         modelBuilder.Entity<Aircraft>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__AIRCRAFT__7111506BA1FDCA55");
@@ -68,6 +90,29 @@ public partial class BeaverEnterprisesContext : DbContext
             entity.HasOne(d => d.IdManufacturerNavigation).WithMany(p => p.Aircraft)
                 .HasForeignKey(d => d.IdManufacturer)
                 .HasConstraintName("FK_AIRCRAFT_MANUFACTURER");
+        });
+
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.ToTable("CART");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.IdAccount).HasColumnName("ID_ACCOUNT");
+            entity.Property(e => e.IdTicket).HasColumnName("ID_TICKET");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("STATUS");
+
+            entity.HasOne(d => d.IdAccountNavigation).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.IdAccount)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CART_ACCOUNT");
+
+            entity.HasOne(d => d.IdTicketNavigation).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.IdTicket)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CART_TICKET");
         });
 
         modelBuilder.Entity<Class>(entity =>
@@ -236,33 +281,20 @@ public partial class BeaverEnterprisesContext : DbContext
 
             entity.ToTable("PASSENGER");
 
-            entity.HasIndex(e => e.Gmail, "UQ__PASSENGE__32149A64DE86B63E").IsUnique();
-
-            entity.HasIndex(e => e.Password, "UQ__PASSENGE__C7DEC330271665E4").IsUnique();
-
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Address)
-                .HasMaxLength(200)
+            entity.Property(e => e.Gender)
+                .HasMaxLength(15)
                 .IsUnicode(false)
-                .HasColumnName("ADDRESS");
-            entity.Property(e => e.Code).HasColumnName("CODE");
-            entity.Property(e => e.Gmail)
-                .HasMaxLength(150)
-                .IsUnicode(false)
-                .HasColumnName("GMAIL");
+                .HasColumnName("GENDER");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("NAME");
-            entity.Property(e => e.Nif).HasColumnName("NIF");
-            entity.Property(e => e.Password)
-                .HasMaxLength(150)
+            entity.Property(e => e.SeatNumber).HasColumnName("SEAT_NUMBER");
+            entity.Property(e => e.Surname)
+                .HasMaxLength(200)
                 .IsUnicode(false)
-                .HasColumnName("PASSWORD");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(15)
-                .IsUnicode(false)
-                .HasColumnName("PHONE");
+                .HasColumnName("SURNAME");
         });
 
         modelBuilder.Entity<Reservation>(entity =>
@@ -285,6 +317,29 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasForeignKey(d => d.IdPassenger)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__RESERVATI__PASSE__5070F446");
+        });
+
+        modelBuilder.Entity<Ticket>(entity =>
+        {
+            entity.ToTable("TICKET");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.IdFlight).HasColumnName("ID_FLIGHT");
+            entity.Property(e => e.IdPassager).HasColumnName("ID_PASSAGER");
+            entity.Property(e => e.SeatNumber)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("SEAT_NUMBER");
+
+            entity.HasOne(d => d.IdFlightNavigation).WithMany(p => p.Tickets)
+                .HasForeignKey(d => d.IdFlight)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TICKET_FLIGHTS");
+
+            entity.HasOne(d => d.IdPassagerNavigation).WithMany(p => p.Tickets)
+                .HasForeignKey(d => d.IdPassager)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TICKET_PASSENGER");
         });
 
         OnModelCreatingPartial(modelBuilder);
