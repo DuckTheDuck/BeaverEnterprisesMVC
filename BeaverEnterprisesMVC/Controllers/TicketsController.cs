@@ -9,22 +9,23 @@ using BeaverEnterprisesMVC.Models;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
-    public class PassengersController : Controller
+    public class TicketsController : Controller
     {
         private readonly BeaverEnterprisesContext _context;
 
-        public PassengersController(BeaverEnterprisesContext context)
+        public TicketsController(BeaverEnterprisesContext context)
         {
             _context = context;
         }
 
-        // GET: Passengers
+        // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Passengers.ToListAsync());
+            var beaverEnterprisesContext = _context.Tickets.Include(t => t.IdFlightNavigation).Include(t => t.IdPassagerNavigation);
+            return View(await beaverEnterprisesContext.ToListAsync());
         }
 
-        // GET: Passengers/Details/5
+        // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +33,45 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers
+            var ticket = await _context.Tickets
+                .Include(t => t.IdFlightNavigation)
+                .Include(t => t.IdPassagerNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (passenger == null)
+            if (ticket == null)
             {
                 return NotFound();
             }
 
-            return View(passenger);
+            return View(ticket);
         }
 
-        // GET: Passengers/Create
+        // GET: Tickets/Create
         public IActionResult Create()
         {
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id");
+            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id");
             return View();
         }
 
-        // POST: Passengers/Create
+        // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Gender,SeatNumber")] Passenger passenger)
+        public async Task<IActionResult> Create([Bind("Id,IdFlight,IdPassager,SeatNumber")] Ticket ticket)
         {
             if (ModelState.IsValid)
-            {                                                                                                
-                _context.Add(passenger);
+            {
+                _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(passenger);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", ticket.IdFlight);
+            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id", ticket.IdPassager);
+            return View(ticket);
         }
 
-        // GET: Passengers/Edit/5
+        // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +79,24 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers.FindAsync(id);
-            if (passenger == null)
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
             {
                 return NotFound();
             }
-            return View(passenger);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", ticket.IdFlight);
+            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id", ticket.IdPassager);
+            return View(ticket);
         }
 
-        // POST: Passengers/Edit/5
+        // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Gender,SeatNumber")] Passenger passenger)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdFlight,IdPassager,SeatNumber")] Ticket ticket)
         {
-            if (id != passenger.Id)
+            if (id != ticket.Id)
             {
                 return NotFound();
             }
@@ -96,12 +105,12 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 try
                 {
-                    _context.Update(passenger);
+                    _context.Update(ticket);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PassengerExists(passenger.Id))
+                    if (!TicketExists(ticket.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +121,12 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(passenger);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", ticket.IdFlight);
+            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id", ticket.IdPassager);
+            return View(ticket);
         }
 
-        // GET: Passengers/Delete/5
+        // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,34 +134,36 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers
+            var ticket = await _context.Tickets
+                .Include(t => t.IdFlightNavigation)
+                .Include(t => t.IdPassagerNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (passenger == null)
+            if (ticket == null)
             {
                 return NotFound();
             }
 
-            return View(passenger);
+            return View(ticket);
         }
 
-        // POST: Passengers/Delete/5
+        // POST: Tickets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var passenger = await _context.Passengers.FindAsync(id);
-            if (passenger != null)
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket != null)
             {
-                _context.Passengers.Remove(passenger);
+                _context.Tickets.Remove(ticket);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PassengerExists(int id)
+        private bool TicketExists(int id)
         {
-            return _context.Passengers.Any(e => e.Id == id);
+            return _context.Tickets.Any(e => e.Id == id);
         }
     }
 }

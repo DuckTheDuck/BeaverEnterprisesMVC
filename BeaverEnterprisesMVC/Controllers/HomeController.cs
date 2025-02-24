@@ -20,6 +20,7 @@ namespace BeaverEnterprisesMVC.Controllers
 
         public IActionResult Index()
         {
+
             return View();
         }
 
@@ -69,17 +70,17 @@ namespace BeaverEnterprisesMVC.Controllers
 
         public IActionResult Login(string email, string password)
         {
-            if (email == "admin@gmail.com" && password == "admin")
-            {
-                return RedirectToAction("Create", "Manufacturers");
-            }
+            //if (email == "admin@gmail.com" && password == "admin")
+            //{
+            //    return RedirectToAction("Create", "Manufacturers");
+            //}
 
-            var user = _context.Passengers.FirstOrDefault(u => u.Gmail == email && u.Password == password);
-            if (user != null)
-            {
-                HttpContext.Session.SetInt32("CurrentUserID", user.Id);
-                return RedirectToAction("Index", "Home");
-            }
+            //var user = _context.Passengers.FirstOrDefault(u => u.Gmail == email && u.Password == password);
+            //if (user != null)
+            //{
+            //    HttpContext.Session.SetInt32("CurrentUserID", user.Id);
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             ViewBag.Error = "Invalid username or password.";
             return View();
@@ -120,5 +121,7 @@ namespace BeaverEnterprisesMVC.Controllers
             return View(flights);
         }
 
+            return View();
+        }
     }
 }

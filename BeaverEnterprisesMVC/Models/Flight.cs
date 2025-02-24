@@ -34,4 +34,6 @@ public partial class Flight
     public virtual Location IdOriginNavigation { get; set; } = null!;
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+
+    public virtual ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 }

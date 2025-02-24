@@ -9,22 +9,23 @@ using BeaverEnterprisesMVC.Models;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
-    public class PassengersController : Controller
+    public class CartsController : Controller
     {
         private readonly BeaverEnterprisesContext _context;
 
-        public PassengersController(BeaverEnterprisesContext context)
+        public CartsController(BeaverEnterprisesContext context)
         {
             _context = context;
         }
 
-        // GET: Passengers
+        // GET: Carts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Passengers.ToListAsync());
+            var beaverEnterprisesContext = _context.Carts.Include(c => c.IdAccountNavigation).Include(c => c.IdTicketNavigation);
+            return View(await beaverEnterprisesContext.ToListAsync());
         }
 
-        // GET: Passengers/Details/5
+        // GET: Carts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +33,45 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers
+            var cart = await _context.Carts
+                .Include(c => c.IdAccountNavigation)
+                .Include(c => c.IdTicketNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (passenger == null)
+            if (cart == null)
             {
                 return NotFound();
             }
 
-            return View(passenger);
+            return View(cart);
         }
 
-        // GET: Passengers/Create
+        // GET: Carts/Create
         public IActionResult Create()
         {
+            ViewData["IdAccount"] = new SelectList(_context.Accounts, "Id", "Id");
+            ViewData["IdTicket"] = new SelectList(_context.Tickets, "Id", "Id");
             return View();
         }
 
-        // POST: Passengers/Create
+        // POST: Carts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Gender,SeatNumber")] Passenger passenger)
+        public async Task<IActionResult> Create([Bind("Id,IdTicket,IdAccount,Status")] Cart cart)
         {
             if (ModelState.IsValid)
-            {                                                                                                
-                _context.Add(passenger);
+            {
+                _context.Add(cart);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(passenger);
+            ViewData["IdAccount"] = new SelectList(_context.Accounts, "Id", "Id", cart.IdAccount);
+            ViewData["IdTicket"] = new SelectList(_context.Tickets, "Id", "Id", cart.IdTicket);
+            return View(cart);
         }
 
-        // GET: Passengers/Edit/5
+        // GET: Carts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +79,24 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers.FindAsync(id);
-            if (passenger == null)
+            var cart = await _context.Carts.FindAsync(id);
+            if (cart == null)
             {
                 return NotFound();
             }
-            return View(passenger);
+            ViewData["IdAccount"] = new SelectList(_context.Accounts, "Id", "Id", cart.IdAccount);
+            ViewData["IdTicket"] = new SelectList(_context.Tickets, "Id", "Id", cart.IdTicket);
+            return View(cart);
         }
 
-        // POST: Passengers/Edit/5
+        // POST: Carts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Gender,SeatNumber")] Passenger passenger)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdTicket,IdAccount,Status")] Cart cart)
         {
-            if (id != passenger.Id)
+            if (id != cart.Id)
             {
                 return NotFound();
             }
@@ -96,12 +105,12 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 try
                 {
-                    _context.Update(passenger);
+                    _context.Update(cart);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PassengerExists(passenger.Id))
+                    if (!CartExists(cart.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +121,12 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(passenger);
+            ViewData["IdAccount"] = new SelectList(_context.Accounts, "Id", "Id", cart.IdAccount);
+            ViewData["IdTicket"] = new SelectList(_context.Tickets, "Id", "Id", cart.IdTicket);
+            return View(cart);
         }
 
-        // GET: Passengers/Delete/5
+        // GET: Carts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,34 +134,36 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var passenger = await _context.Passengers
+            var cart = await _context.Carts
+                .Include(c => c.IdAccountNavigation)
+                .Include(c => c.IdTicketNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (passenger == null)
+            if (cart == null)
             {
                 return NotFound();
             }
 
-            return View(passenger);
+            return View(cart);
         }
 
-        // POST: Passengers/Delete/5
+        // POST: Carts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var passenger = await _context.Passengers.FindAsync(id);
-            if (passenger != null)
+            var cart = await _context.Carts.FindAsync(id);
+            if (cart != null)
             {
-                _context.Passengers.Remove(passenger);
+                _context.Carts.Remove(cart);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PassengerExists(int id)
+        private bool CartExists(int id)
         {
-            return _context.Passengers.Any(e => e.Id == id);
+            return _context.Carts.Any(e => e.Id == id);
         }
     }
 }
