@@ -26,7 +26,40 @@
     </div>
     <div class="modify-section">
         <div class=" centerBookingHeaad">
-            @await Html.PartialAsync("_MainLayout")
+            <form id="departurebookingForm" action="/Home/BookingAvailability" method="post" onsubmit="return validateForm()">
+                <div class="search-box">
+                    <h2>Find Your Flight</h2>
+
+                    <div class="margin">
+                        <div class="divider">
+                            <label for="book-departure">Origem</label>
+                            <input type="text" class="form-control" name="Origin" id="book-airport-input-Origin" placeholder="Origin" value="@ViewBag.Origin">
+                            <div class="suggestions">
+                                @await Html.PartialAsync("_AirportsSuggestionsOrigin")
+                            </div>
+                        </div>
+
+                        <div class="divider">
+                            <label for="book-departure">Destino</label>
+                            <input type="text" class="form-control" name="Destination" id="book-airport-input-Destination" placeholder="Destination" value="@ViewBag.Destination">
+                            <div class="suggestions">
+                                @await Html.PartialAsync("_AirportsSuggestionsDestination")
+                            </div>
+                        </div>
+
+                        <div class="divider">
+                            <label for="book-departure">Partida</label>
+                            <input type="date" class="form-control" name="Departure" id="book-departure" value="@ViewBag.Departure">
+                        </div>
+
+                        <div class="divider">
+                            <label for="book-arrival">Chegada</label>
+                            <input type="date" class="form-control" name="Arrival" id="book-arrival" value="@ViewBag.Arrival">
+                        </div>
+                        <input type="submit" class="bttpesquisar" value="Pesquisar" id="book-bttbooking">
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <div class="centerBttBookingHead">
@@ -37,84 +70,51 @@
 
     <div class="container mt-4">
         <h2>Please select your return</h2>
-        <h4>Geneva to Lisbon</h4>
-        <div class="flight-card">
-            <div class="flight-header">
-                <div>
-                    <div class="flight-time">19:55</div>
-                    <div class="text-muted">CDG - Terminal 1</div>
-                </div>
-                <div>
-                    <div class="flight-duration">6h 45m BRU</div>
-                    <div class="text-muted">Duration: 10h 35m</div>
-                </div>
-                <div>
-                    <div class="flight-time">07:30 +1 day</div>
-                    <div class="text-muted">LIS - Terminal 1</div>
-                </div>
-                <div class="flight-airline">
-                    ✈ Operated by TAP Air Portugal, Brussels Airlines
-                </div>
-                <div class="d-flex">
-                    <div class="price-box economy" onclick="selectClass(this, 'economy')">
-                        <p>Economy</p>
-                        <h4>€581.02</h4>
-                    </div>
-                    <div class="price-box class" onclick="selectClass(this, 'Premium econumy')">
-                        <p>Premium Economy</p>
-                        <h4>€1014.11</h4>
-                    </div>
-                    <div class="price-box class" onclick="selectClass(this, '1´class')">
-                        <p>1´Class</p>
-                        <h4>€1683.87</h4>
-                    </div>
-                    <div class="price-box class" onclick="selectClass(this, 'Bussiness')">
-                        <p>Bussiness</p>
-                        <h4>€2034.87</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <h4>@ViewBag.Origin to @ViewBag.Destination</h4>
 
-    <div class="container mt-4">
-        <div class="flight-card">
-            <div class="flight-header">
-                <div>
-                    <div class="flight-time">20:55</div>
-                    <div class="text-muted">GEN - Terminal 1</div>
-                </div>
-                <div>
-                    <div class="flight-duration">6h 45m BRU</div>
-                    <div class="text-muted">Duration: 10h 35m</div>
-                </div>
-                <div>
-                    <div class="flight-time">08:30 +1 day</div>
-                    <div class="text-muted">LIS - Terminal 1</div>
-                </div>
-                <div class="flight-airline">
-                    ✈ Operated by TAP Air Portugal, Brussels Airlines
-                </div>
-                <div class="d-flex">
-                    <div class="price-box economy" onclick="selectClass(this, 'economy')">
-                        <p>Economy</p>
-                        <h4>€581.02</h4>
+        @foreach (var flight in Model)
+
+
+
+        {
+            <div class="flight-card">
+                <div class="flight-header">
+                    <div>
+                        <div class="flight-time">@flight.DepartureTime</div>
+                        <div class="text-muted">@flight.IdOriginNavigation.Name - Terminal 1</div>
                     </div>
-                    <div class="price-box class" onclick="selectClass(this, 'Premium econumy')">
-                        <p>Premium Economy</p>
-                        <h4>€1014.11</h4>
+                    <div>
+                        <div class="flight-duration">Duration</div>
+                        <div class="text-muted">6h 45m</div>
                     </div>
-                    <div class="price-box class" onclick="selectClass(this, '1´class')">
-                        <p>1´Class</p>
-                        <h4>€1683.87</h4>
+                    <div>
+                        <div class="flight-time">@flight.ArrivalTime</div>
+                        <div class="text-muted">@flight.IdDestinationNavigation.Name - Terminal 1</div>
                     </div>
-                    <div class="price-box class" onclick="selectClass(this, 'Bussiness')">
-                        <p>Bussiness</p>
-                        <h4>€2034.87</h4>
+                    <div class="flight-airline">
+                        ✈ Operated by @flight.IdAircraftNavigation.Model
+                    </div>
+                    <div class="d-flex">
+                        <div class="price-box economy" onclick="selectClass(this, 'Economy')">
+                            <p>Economy</p>
+                            <h4>€581.02</h4>
+                        </div>
+                        <div class="price-box class" onclick="selectClass(this, 'Premium Economy')">
+                            <p>Premium Economy</p>
+                            <h4>€1014.11</h4>
+                        </div>
+                        <div class="price-box class" onclick="selectClass(this, 'First Class')">
+                            <p>First Class</p>
+                            <h4>€1683.87</h4>
+                        </div>
+                        <div class="price-box class" onclick="selectClass(this, 'Business')">
+                            <p>Business</p>
+                            <h4>€2034.87</h4>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
     <div class="container text-end mt-4">
         <button class="btn-primary-booking-search" onclick="confirmSelection()">Select</button>
@@ -173,6 +173,7 @@
             color: rgb(130, 89, 46);
             align-content: center;
         }
+
         .image-Simao-Booking {
             background-image: url('/images/aurora castor.png');
             background-size: cover;

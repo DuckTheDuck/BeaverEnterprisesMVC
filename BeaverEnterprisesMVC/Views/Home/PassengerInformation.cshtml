@@ -1,0 +1,167 @@
+﻿@{
+    ViewData["Title"] = "User Information Page";
+}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information | Airline</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+</head>
+
+<body>
+
+    <div class="centerBookingHeaad">
+        <div class="herov2">
+            <div class="navbarcustom">
+                <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
+                <div class="leftnavbarcustom">
+                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                    <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                    <div class="navitem"><a href="#">Contact</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>User Information</h2>
+
+                <!-- Formulário de Informações do Usuário -->
+                <div id="user-info-form">
+                    <label for="full-name" class="form-label">Full Name</label>
+                    <input type="text" id="full-name" class="form-control mb-3" placeholder="Enter your full name">
+
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control mb-3" placeholder="Enter your email">
+
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control mb-3" placeholder="Enter your phone number">
+
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" id="address" class="form-control mb-3" placeholder="Enter your address">
+
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" id="city" class="form-control mb-3" placeholder="Enter your city">
+
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" id="country" class="form-control mb-3" placeholder="Enter your country">
+
+                    <button class="btn-submit" onclick="submitUserInfo()">Submit Information</button>
+                </div>
+
+                <!-- Informação de Usuário Confirmada (esconde antes de preencher) -->
+                <div id="user-info-confirmed" style="display: none;">
+                    <p class="user-info">Name: <span class="highlight" id="confirmed-name"></span></p>
+                    <p class="user-info">Email: <span class="highlight" id="confirmed-email"></span></p>
+                    <p class="user-info">Phone: <span class="highlight" id="confirmed-phone"></span></p>
+                    <p class="user-info">Address: <span class="highlight" id="confirmed-address"></span></p>
+                    <p class="user-info">City: <span class="highlight" id="confirmed-city"></span></p>
+                    <p class="user-info">Country: <span class="highlight" id="confirmed-country"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer text-center">
+        <p1>&copy; 2025 Airline. All Rights Reserved.</p1>
+    </footer>
+
+    <script>
+        function submitUserInfo() {
+            let fullName = document.getElementById("full-name").value;
+            let email = document.getElementById("email").value;
+            let phone = document.getElementById("phone").value;
+            let address = document.getElementById("address").value;
+            let city = document.getElementById("city").value;
+            let country = document.getElementById("country").value;
+
+            if (fullName.trim() === "" || email.trim() === "" || phone.trim() === "" || address.trim() === "" || city.trim() === "" || country.trim() === "") {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            // Esconde o formulário e mostra a informação do usuário
+            document.getElementById("user-info-form").style.display = "none";
+            document.getElementById("user-info-confirmed").style.display = "block";
+
+            // Atualiza os dados do usuário
+            document.getElementById("confirmed-name").innerText = fullName;
+            document.getElementById("confirmed-email").innerText = email;
+            document.getElementById("confirmed-phone").innerText = phone;
+            document.getElementById("confirmed-address").innerText = address;
+            document.getElementById("confirmed-city").innerText = city;
+            document.getElementById("confirmed-country").innerText = country;
+        }
+    </script>
+
+    <style>
+        .user-info {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
+            padding: 8px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        input, .btn-submit {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        .btn-submit {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 18px;
+            margin-bottom: 130px;
+            width: 40%;
+        }
+
+            .btn-submit:hover {
+                background-color: #0056b3;
+            }
+
+        .navbarcustombooking {
+            display: flex;
+            background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: rgb(130, 89, 46);
+            width: 100%;
+            max-width: 1250px;
+            position: relative;
+            margin-top: 1%
+        }
+
+        .centerBookingHeaad {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 20vh;
+            width: 100%;
+        }
+
+        .airline-do-Simao {
+            font-size: 24px;
+            font-weight: bold;
+            color: rgb(130, 89, 46);
+            align-content: center;
+        }
+    </style>
+
+</body>
+</html>

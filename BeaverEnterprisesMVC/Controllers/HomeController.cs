@@ -40,6 +40,10 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
+        public IActionResult PassengerInformation()
+        {
+            return View();
+        }
         public IActionResult CheckIn()
         {
             return View();
@@ -80,12 +84,41 @@ namespace BeaverEnterprisesMVC.Controllers
             ViewBag.Error = "Invalid username or password.";
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> BookingAvailability(string Origin, string Destination, string Departure, string Arrival)
+        {
+            ViewBag.Origin = Origin;
+            ViewBag.Destination = Destination;
+            ViewBag.Departure = Departure;
+            ViewBag.Arrival = Arrival;
 
+            var flights = await _context.Flights
+           .Include(f => f.IdOriginNavigation)
+           .Include(f => f.IdDestinationNavigation)
+           .Include(f => f.IdAircraftNavigation)
+           .Include(f => f.IdClassNavigation)
+           .ToListAsync();
 
+            return View(flights);
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> BookingAvailabilityReturn(string Origin, string Destination, string Departure, string Arrival)
+        {
+            ViewBag.Origin = Origin;
+            ViewBag.Destination = Destination;
+            ViewBag.Departure = Departure;
+            ViewBag.Arrival = Arrival;
 
+            var flights = await _context.Flights
+           .Include(f => f.IdOriginNavigation)
+           .Include(f => f.IdDestinationNavigation)
+           .Include(f => f.IdAircraftNavigation)
+           .Include(f => f.IdClassNavigation)
+           .ToListAsync();
 
-
+            return View(flights);
+        }
 
     }
 }

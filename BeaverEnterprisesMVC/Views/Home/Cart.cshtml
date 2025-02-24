@@ -1,6 +1,4 @@
-﻿@{
-    ViewData["Title"] = "BookingAvailability Page";
-}
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,6 +23,7 @@
             </div>
         </div>
     </div>
+
     <div class="container mt-4">
         <h2>Your Selection</h2>
         <h4>Geneva to Lisbon</h4>
@@ -55,7 +54,6 @@
             </div>
         </div>
     </div>
-
     <div class="container mt-4">
         <div class="flight-card">
             <div class="flight-header">
@@ -83,10 +81,52 @@
             </div>
         </div>
     </div>
+    <h4 id="total-price-display" style="display: none; text-align: right; margin-right: 305px;">
+        Total Price: EUR 805.01
+    </h4>
+    <div class="container mt-4">
+        <div class="passenger-info-card">
+            <h2>Passenger Information</h2>
+            <div class="passenger-header" onclick="togglePassengerDetails(this)">
+                <i class="fas fa-user"></i>
+                <div class="passenger-header-info">
+                    <h4>Malandro Antonio</h4>
+                    <p>Adult</p>
+                </div>
+                <div class="passenger-header-contact">
+                    <p>simaomartins14@gmail.com</p>
+                    <p>+351 969578605</p>
+                </div>
+            </div>
+            <div class="passenger-details">
+                <h6>Personal Information</h6>
+                <div class="detail-item">
+                    <span class="detail-label">Date of Birth: </span>
+                    <span class="detail-value">18/06/1999</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Gender: </span>
+                    <span class="detail-value">Male</span>
+                </div>
+                <h6>Contact Information</h6>
+                <div class="detail-item">
+                    <span class="detail-label">Email: </span>
+                    <span class="detail-value">simaomartins14@gmail.com</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Phone: </span>
+                    <span class="detail-value">+351 969578605</span>
+                </div>
+            </div>
+            <div class="passenger-footer">
+                <button class="btn-modify">Modify</button>
+            </div>
+        </div>
+    </div>
     <div class="container text-end mt-4">
         <h3>Total price:EUR 805.01</h3>
         <p>Round trip price for all passengers (incl. taxes, fees and surcharges)</p>
-        <button class="btn-primary-booking-search" onclick="confirmSelection()">Select</button>
+        <button class="btn-primary-booking-search" href="@Url.Action("PassengerInformation","Home")" onclick="confirmSelection()">Enter Passenger Information</button>
     </div>
     <div class="container mt-4">
         <p>Fares are not guaranteed until you confirm your purchase by clicking the “Yes, book and pay for ticket” button.**</p>
@@ -138,6 +178,117 @@
             color: rgb(130, 89, 46);
             align-content: center;
         }
+
+        .passenger-info-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-top: 80px;
+        }
+
+        .passenger-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+            .passenger-header i {
+                margin-right: 10px;
+                font-size: 1.5rem;
+                color: rgb(130, 89, 46);
+            }
+
+        .passenger-header-info {
+            flex: 1;
+        }
+
+            .passenger-header-info h4 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+
+            .passenger-header-info p {
+                margin: 0;
+                color: #666;
+            }
+
+        .passenger-header-contact {
+            text-align: right;
+            flex: 1;
+        }
+
+            .passenger-header-contact p {
+                margin: 0;
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+        .passenger-details {
+            margin-bottom: 10px; /* Inicialmente oculto */
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: left;
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .detail-value {
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .passenger-footer {
+            text-align: right;
+        }
+
+        .btn-modify {
+            background-color: rgb(130, 89, 46);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
+
+    <script>
+        function togglePassengerDetails(header) {
+            const details = header.parentElement.querySelector('.passenger-details');
+            const contactInfo = header.querySelector('.passenger-header-contact');
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                contactInfo.style.display = 'none';
+            } else {
+                details.style.display = 'none';
+                contactInfo.style.display = 'block';
+            }
+        }
+        function confirmSelection() {
+            // Mostra as informações do passageiro
+            document.querySelector('.passenger-info-card').style.display = 'block';
+
+            // Mostra o total antes das informações do passageiro
+            document.getElementById('total-price-display').style.display = 'block';
+
+            // Muda o texto do botão para "Confirm Payout"
+            let button = document.querySelector('.btn-primary-booking-search');
+            button.textContent = "Confirm Payout";
+
+            // Redireciona para a página "PassengerInformation"
+            window.location.href = '@Url.Action("PassengerInformation", "Home")';
+        }
+    </script>
 </body>
 </html>

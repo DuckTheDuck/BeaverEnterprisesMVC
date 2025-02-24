@@ -56,7 +56,7 @@ namespace BeaverEnterprisesMVC.Controllers
         public async Task<IActionResult> Create([Bind("Id,Name,Address,Phone,Nif,Code,Gmail,Password")] Passenger passenger)
         {
             if (ModelState.IsValid)
-            {
+            {                                                                                                
                 _context.Add(passenger);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
