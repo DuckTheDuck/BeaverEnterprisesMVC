@@ -8,57 +8,41 @@
     ViewData["Title"] = "Index";
 }
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+
+<!-- jQuery e DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 
 <h1>Index</h1>
 <form method="get" asp-action="Create" style="display:inline;">
     <button type="submit" class="btn beaverBrown bttbackend">Create</button>
 </form>
-<table class="table">
+
+<table id="aircraftTable" class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Capacity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinimumLicense)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SerialNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdManufacturerNavigation)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Model)</th>
+            <th>@Html.DisplayNameFor(model => model.Capacity)</th>
+            <th>@Html.DisplayNameFor(model => model.MinimumLicense)</th>
+            <th>@Html.DisplayNameFor(model => model.SerialNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.IdManufacturerNavigation)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Capacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MinimumLicense)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SerialNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdManufacturerNavigation.Id)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                <td>@Html.DisplayFor(modelItem => item.Capacity)</td>
+                <td>@Html.DisplayFor(modelItem => item.MinimumLicense)</td>
+                <td>@Html.DisplayFor(modelItem => item.SerialNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdManufacturerNavigation.Id)</td>
+                <td>
                     <form method="get" asp-action="Edit" asp-route-id="@item.Id" style="display:inline;">
                         <button type="submit" class="btn btn-primary bttbackend">Edit</button>
                     </form>
@@ -68,8 +52,44 @@
                     <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
                         <button type="submit" class="btn btn-danger bttbackend">Delete</button>
                     </form>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<script>
+    function initializeDataTable() {
+        if ($.fn.DataTable.isDataTable("#aircraftTable")) {
+            $("#aircraftTable").DataTable().destroy();
+        }
+        $("#aircraftTable").DataTable();
+    }
+
+    $(document).ready(function () {
+        // Intercepta o clique nos links com a classe 'load-partial'
+        $(document).on("click", ".load-partial", function (e) {
+            e.preventDefault(); // Impede a navegação padrão (recarregar a página)
+
+            var url = $(this).attr("href"); // Pega o valor do href (a URL)
+
+            console.log("Carregando URL:", url); // Debug: Verifica a URL que está sendo carregada
+
+            $.ajax({
+                url: url, // Faz a requisição para o controlador
+                type: 'GET',
+                success: function (data) {
+                    $(".right").html(data); // Insere a Partial View no container
+
+                    initializeDataTable();
+                },
+                error: function () {
+                    alert("Erro ao carregar a Partial View.");
+                }
+            });
+
+            return false; // Evita qualquer outra ação no <a>
+        });
+        initializeDataTable();
+    });
+</script>

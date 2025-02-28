@@ -8,39 +8,31 @@
     ViewData["Title"] = "Index";
 }
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
 
 <h1>Index</h1>
 <form method="get" asp-action="Create" style="display:inline;">
     <button type="submit" class="btn beaverBrown bttbackend">Create</button>
 </form>
-<table class="table">
+
+<table id="locationTable" class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Country)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.City)</th>
+            <th>@Html.DisplayNameFor(model => model.Country)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.City)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Country)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.City)</td>
+                <td>@Html.DisplayFor(modelItem => item.Country)</td>
+                <td>
                     <form method="get" asp-action="Edit" asp-route-id="@item.Id" style="display:inline;">
                         <button type="submit" class="btn btn-primary bttbackend">Edit</button>
                     </form>
@@ -50,8 +42,36 @@
                     <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
                         <button type="submit" class="btn btn-danger bttbackend">Delete</button>
                     </form>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<!-- Mover os scripts para o final da página -->
+@section Scripts {
+    <!-- Carregue jQuery antes do DataTables -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            if (typeof jQuery === "undefined") {
+                console.error("Erro: jQuery não foi carregado corretamente.");
+                return;
+            }
+
+            $('#locationTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/2.2.2/i18n/pt-PT.json"
+                }
+            });
+        });
+    </script>
+}
+
+}

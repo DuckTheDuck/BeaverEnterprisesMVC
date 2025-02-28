@@ -1,77 +1,90 @@
 ﻿@model IEnumerable<BeaverEnterprisesMVC.Models.Flight>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+
+<!-- jQuery e DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+
+<table id="flightTable" class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FlightNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartureTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ArrivalTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Periocity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdAircraftNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdClassNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdDestinationNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdOriginNavigation)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.FlightNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.DepartureTime)</th>
+            <th>@Html.DisplayNameFor(model => model.ArrivalTime)</th>
+            <th>@Html.DisplayNameFor(model => model.Periocity)</th>
+            <th>@Html.DisplayNameFor(model => model.IdAircraftNavigation)</th>
+            <th>@Html.DisplayNameFor(model => model.IdClassNavigation)</th>
+            <th>@Html.DisplayNameFor(model => model.IdDestinationNavigation)</th>
+            <th>@Html.DisplayNameFor(model => model.IdOriginNavigation)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FlightNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartureTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ArrivalTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Periocity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdAircraftNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdClassNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdDestinationNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdOriginNavigation.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.FlightNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.DepartureTime)</td>
+                <td>@Html.DisplayFor(modelItem => item.ArrivalTime)</td>
+                <td>@Html.DisplayFor(modelItem => item.Periocity)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdAircraftNavigation.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdClassNavigation.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdDestinationNavigation.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdOriginNavigation.Id)</td>
+                <td>
+                    <form method="get" asp-action="Edit" asp-route-id="@item.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-primary bttbackend">Edit</button>
+                    </form>
+                    <form method="get" asp-action="Details" asp-route-id="@item.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-info bttbackend">Details</button>
+                    </form>
+                    <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger bttbackend">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<script>
+    function initializeDataTable() {
+        if ($.fn.DataTable.isDataTable("#flightTable")) {
+            $("#flightTable").DataTable().destroy();
+        }
+        $("#flightTable").DataTable();
+    }
+
+    $(document).ready(function () {
+        $(document).on("click", ".load-partial", function (e) {
+            e.preventDefault();
+            var url = $(this).attr("href");
+            console.log("Carregando URL:", url);
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    $(".right").html(data);
+                    initializeDataTable();
+                },
+                error: function () {
+                    alert("Erro ao carregar a Partial View.");
+                }
+            });
+            return false;
+        });
+        initializeDataTable();
+    });
+</script>

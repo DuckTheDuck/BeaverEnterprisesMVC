@@ -8,69 +8,45 @@
     ViewData["Title"] = "Index";
 }
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+
+<!-- jQuery e DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 
 <h1>Index</h1>
 <form method="get" asp-action="Create" style="display:inline;">
     <button type="submit" class="btn beaverBrown bttbackend">Create</button>
 </form>
-<table class="table">
+
+<table id="employeeTable" class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MonthlySalary)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPilot)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumHours)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.License)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LicenseNum)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Address)</th>
+            <th>@Html.DisplayNameFor(model => model.Phone)</th>
+            <th>@Html.DisplayNameFor(model => model.MonthlySalary)</th>
+            <th>@Html.DisplayNameFor(model => model.IsPilot)</th>
+            <th>@Html.DisplayNameFor(model => model.NumHours)</th>
+            <th>@Html.DisplayNameFor(model => model.License)</th>
+            <th>@Html.DisplayNameFor(model => model.LicenseNum)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MonthlySalary)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPilot)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumHours)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.License)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LicenseNum)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                <td>@Html.DisplayFor(modelItem => item.MonthlySalary)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsPilot)</td>
+                <td>@Html.DisplayFor(modelItem => item.NumHours)</td>
+                <td>@Html.DisplayFor(modelItem => item.License)</td>
+                <td>@Html.DisplayFor(modelItem => item.LicenseNum)</td>
+                <td>
                     <form method="get" asp-action="Edit" asp-route-id="@item.Id" style="display:inline;">
                         <button type="submit" class="btn btn-primary bttbackend">Edit</button>
                     </form>
@@ -80,8 +56,38 @@
                     <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
                         <button type="submit" class="btn btn-danger bttbackend">Delete</button>
                     </form>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<script>
+    function initializeDataTable() {
+        if ($.fn.DataTable.isDataTable("#employeeTable")) {
+            $("#employeeTable").DataTable().destroy();
+        }
+        $("#employeeTable").DataTable();
+    }
+
+    $(document).ready(function () {
+        $(document).on("click", ".load-partial", function (e) {
+            e.preventDefault();
+            var url = $(this).attr("href");
+            console.log("Carregando URL:", url);
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    $(".right").html(data);
+                    initializeDataTable();
+                },
+                error: function () {
+                    alert("Erro ao carregar a Partial View.");
+                }
+            });
+            return false;
+        });
+        initializeDataTable();
+    });
+</script>
