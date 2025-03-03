@@ -27,6 +27,8 @@ public partial class BeaverEnterprisesContext : DbContext
 
     public virtual DbSet<Flight> Flights { get; set; }
 
+    public virtual DbSet<Flightschedule> Flightschedules { get; set; }
+
     public virtual DbSet<Function> Functions { get; set; }
 
     public virtual DbSet<Location> Locations { get; set; }
@@ -182,6 +184,9 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasMaxLength(16)
                 .IsUnicode(false)
                 .HasColumnName("DEPARTURE_TIME");
+            entity.Property(e => e.EndDate)
+                .HasColumnType("datetime")
+                .HasColumnName("END_DATE");
             entity.Property(e => e.FlightNumber).HasColumnName("FLIGHT_NUMBER");
             entity.Property(e => e.IdAircraft).HasColumnName("ID_AIRCRAFT");
             entity.Property(e => e.IdClass).HasColumnName("ID_CLASS");
@@ -190,6 +195,9 @@ public partial class BeaverEnterprisesContext : DbContext
             entity.Property(e => e.Periocity)
                 .HasDefaultValue(-1)
                 .HasColumnName("PERIOCITY");
+            entity.Property(e => e.StartDate)
+                .HasColumnType("datetime")
+                .HasColumnName("START_DATE");
 
             entity.HasOne(d => d.IdAircraftNavigation).WithMany(p => p.Flights)
                 .HasForeignKey(d => d.IdAircraft)
@@ -210,6 +218,21 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasForeignKey(d => d.IdOrigin)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__FLIGHTS__ORIGIN___4CA06362");
+        });
+
+        modelBuilder.Entity<Flightschedule>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__FLIGHTSC__3214EC2738A1E547");
+
+            entity.ToTable("FLIGHTSCHEDULE");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.FlightDate).HasColumnName("FLIGHT_DATE");
+            entity.Property(e => e.IdFlight).HasColumnName("ID_FLIGHT");
+
+            entity.HasOne(d => d.IdFlightNavigation).WithMany(p => p.Flightschedules)
+                .HasForeignKey(d => d.IdFlight)
+                .HasConstraintName("FK__FLIGHTSCH__ID_FL__5EBF139D");
         });
 
         modelBuilder.Entity<Function>(entity =>
@@ -324,17 +347,16 @@ public partial class BeaverEnterprisesContext : DbContext
             entity.ToTable("TICKET");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.IdFlight).HasColumnName("ID_FLIGHT");
+            entity.Property(e => e.IdFlightSchedule).HasColumnName("ID_FLIGHT_SCHEDULE");
             entity.Property(e => e.IdPassager).HasColumnName("ID_PASSAGER");
             entity.Property(e => e.SeatNumber)
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("SEAT_NUMBER");
 
-            entity.HasOne(d => d.IdFlightNavigation).WithMany(p => p.Tickets)
-                .HasForeignKey(d => d.IdFlight)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TICKET_FLIGHTS");
+            entity.HasOne(d => d.IdFlightScheduleNavigation).WithMany(p => p.Tickets)
+                .HasForeignKey(d => d.IdFlightSchedule)
+                .HasConstraintName("FK_TICKET_FLIGHT_SCHEDULE");
 
             entity.HasOne(d => d.IdPassagerNavigation).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.IdPassager)

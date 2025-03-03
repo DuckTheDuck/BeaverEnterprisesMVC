@@ -23,6 +23,12 @@ public partial class Flight
 
     public int Periocity { get; set; }
 
+    public DateTime? StartDate { get; set; }
+
+    public DateTime? EndDate { get; set; }
+
+    public virtual ICollection<Flightschedule> Flightschedules { get; set; } = new List<Flightschedule>();
+
     public virtual ICollection<Function> Functions { get; set; } = new List<Function>();
 
     public virtual Aircraft IdAircraftNavigation { get; set; } = null!;
@@ -34,6 +40,4 @@ public partial class Flight
     public virtual Location IdOriginNavigation { get; set; } = null!;
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
-
-    public virtual ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 }
