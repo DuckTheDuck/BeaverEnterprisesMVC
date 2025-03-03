@@ -120,8 +120,5 @@ namespace BeaverEnterprisesMVC.Controllers
 
             return View(flights);
         }
-
-            return View();
-        }
     }
 }
