@@ -3,6 +3,7 @@ using System.Diagnostics;
 using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -39,8 +40,24 @@ namespace BeaverEnterprisesMVC.Controllers
         }
         public IActionResult Cart()
         {
-            return View();
+            // Inicializa o contexto do banco de dados
+            using (BeaverEnterprisesContext entities = new BeaverEnterprisesContext())
+            {
+                int? currentUser = HttpContext.Session.GetInt32("CurrentUserID");
+
+                if (currentUser == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                List<Cart> listcard = entities.Carts
+                    .Where(c => c.IdAccount == currentUser && c.Status == "por comprar")
+                    .ToList();
+
+                return View(listcard);
+            }
         }
+
         public IActionResult PassengerInformation()
         {
             return View();
