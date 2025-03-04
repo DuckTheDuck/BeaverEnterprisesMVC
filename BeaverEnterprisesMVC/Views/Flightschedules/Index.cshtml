@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BeaverEnterprisesMVC.Models.Ticket>
+﻿@model IEnumerable<BeaverEnterprisesMVC.Models.Flightschedule>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,13 +13,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.SeatNumber)
+                @Html.DisplayNameFor(model => model.FlightDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdFlightScheduleNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdPassagerNavigation)
+                @Html.DisplayNameFor(model => model.IdFlightNavigation)
             </th>
             <th></th>
         </tr>
@@ -28,13 +25,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.SeatNumber)
+                @Html.DisplayFor(modelItem => item.FlightDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IdFlightScheduleNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdPassagerNavigation.Id)
+                @Html.DisplayFor(modelItem => item.IdFlightNavigation.Id)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

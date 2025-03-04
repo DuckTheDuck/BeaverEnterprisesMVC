@@ -9,23 +9,23 @@ using BeaverEnterprisesMVC.Models;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
-    public class TicketsController : Controller
+    public class FlightschedulesController : Controller
     {
         private readonly BeaverEnterprisesContext _context;
 
-        public TicketsController(BeaverEnterprisesContext context)
+        public FlightschedulesController(BeaverEnterprisesContext context)
         {
             _context = context;
         }
 
-        // GET: Tickets
+        // GET: Flightschedules
         public async Task<IActionResult> Index()
         {
-            var beaverEnterprisesContext = _context.Tickets.Include(t => t.IdFlightScheduleNavigation).Include(t => t.IdPassagerNavigation);
+            var beaverEnterprisesContext = _context.Flightschedules.Include(f => f.IdFlightNavigation);
             return View(await beaverEnterprisesContext.ToListAsync());
         }
 
-        // GET: Tickets/Details/5
+        // GET: Flightschedules/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,45 +33,42 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.IdFlightScheduleNavigation)
-                .Include(t => t.IdPassagerNavigation)
+            var flightschedule = await _context.Flightschedules
+                .Include(f => f.IdFlightNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            if (flightschedule == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(flightschedule);
         }
 
-        // GET: Tickets/Create
+        // GET: Flightschedules/Create
         public IActionResult Create()
         {
-            ViewData["IdFlightSchedule"] = new SelectList(_context.Flightschedules, "Id", "Id");
-            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id");
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id");
             return View();
         }
 
-        // POST: Tickets/Create
+        // POST: Flightschedules/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IdPassager,SeatNumber,IdFlightSchedule")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,IdFlight,FlightDate")] Flightschedule flightschedule)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ticket);
+                _context.Add(flightschedule);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdFlightSchedule"] = new SelectList(_context.Flightschedules, "Id", "Id", ticket.IdFlightSchedule);
-            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id", ticket.IdPassager);
-            return View(ticket);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", flightschedule.IdFlight);
+            return View(flightschedule);
         }
 
-        // GET: Tickets/Edit/5
+        // GET: Flightschedules/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,24 +76,23 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket == null)
+            var flightschedule = await _context.Flightschedules.FindAsync(id);
+            if (flightschedule == null)
             {
                 return NotFound();
             }
-            ViewData["IdFlightSchedule"] = new SelectList(_context.Flightschedules, "Id", "Id", ticket.IdFlightSchedule);
-            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id", ticket.IdPassager);
-            return View(ticket);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", flightschedule.IdFlight);
+            return View(flightschedule);
         }
 
-        // POST: Tickets/Edit/5
+        // POST: Flightschedules/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdPassager,SeatNumber,IdFlightSchedule")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdFlight,FlightDate")] Flightschedule flightschedule)
         {
-            if (id != ticket.Id)
+            if (id != flightschedule.Id)
             {
                 return NotFound();
             }
@@ -105,12 +101,12 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 try
                 {
-                    _context.Update(ticket);
+                    _context.Update(flightschedule);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketExists(ticket.Id))
+                    if (!FlightscheduleExists(flightschedule.Id))
                     {
                         return NotFound();
                     }
@@ -121,12 +117,11 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdFlightSchedule"] = new SelectList(_context.Flightschedules, "Id", "Id", ticket.IdFlightSchedule);
-            ViewData["IdPassager"] = new SelectList(_context.Passengers, "Id", "Id", ticket.IdPassager);
-            return View(ticket);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", flightschedule.IdFlight);
+            return View(flightschedule);
         }
 
-        // GET: Tickets/Delete/5
+        // GET: Flightschedules/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,36 +129,35 @@ namespace BeaverEnterprisesMVC.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.IdFlightScheduleNavigation)
-                .Include(t => t.IdPassagerNavigation)
+            var flightschedule = await _context.Flightschedules
+                .Include(f => f.IdFlightNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            if (flightschedule == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(flightschedule);
         }
 
-        // POST: Tickets/Delete/5
+        // POST: Flightschedules/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
+            var flightschedule = await _context.Flightschedules.FindAsync(id);
+            if (flightschedule != null)
             {
-                _context.Tickets.Remove(ticket);
+                _context.Flightschedules.Remove(flightschedule);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TicketExists(int id)
+        private bool FlightscheduleExists(int id)
         {
-            return _context.Tickets.Any(e => e.Id == id);
+            return _context.Flightschedules.Any(e => e.Id == id);
         }
     }
 }

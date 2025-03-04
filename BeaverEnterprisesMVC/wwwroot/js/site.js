@@ -102,6 +102,50 @@ function validateForm() {
     return true;
 }
 
+function validateFormModify() {
+    // Pega os valores dos campos
+    var origin = document.getElementById("book-airport-input-Origin").value.trim();
+    var destination = document.getElementById("book-airport-input-Destination").value.trim();
+    var departure = document.getElementById("book-departure").value;
+    var arrival = document.getElementById("book-arrival").value;
+    var passegers = document.getElementById("book-passengers").value;
+
+    // Verifica se os campos estão vazios apenas quando o formulário for submetido
+    if (!origin || !destination || !departure || !arrival || !passegers) {
+        alert("Por favor, preencha todos os campos antes de continuar!");
+        return false;
+    }
+
+    // Valida se o local de origem e destino são diferentes
+    if (origin === destination) {
+        alert("Não podes ter o mesmo local para origem e destino!");
+        return false;
+    }
+
+    // Valida a data de partida e chegada
+    var today = new Date();
+    today.setHours(0, 0, 0, 0); // Define o horário para meio-dia para evitar diferenças de horário
+
+    var departureDate = new Date(departure + "T00:00:00");
+    var arrivalDate = new Date(arrival + "T00:00:00");
+
+    // Verifica se a data de partida é no futuro
+    if (departureDate < today) {
+        alert("A data de partida não pode ser inferior à data de hoje!");
+        return false;
+    }
+
+    // Verifica se a data de chegada é após a data de partida
+    if (arrivalDate < departureDate) {
+        alert("A data de chegada não pode ser antes da data de partida!");
+        return false;
+    }
+
+    return true;
+}
+
+
+
 
 function suggest(input, suggestion) {
 

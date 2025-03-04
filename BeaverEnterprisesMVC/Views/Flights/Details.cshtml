@@ -1,4 +1,15 @@
 ﻿@model BeaverEnterprisesMVC.Models.Flight
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+
+<!-- jQuery e DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 
 @{
     ViewData["Title"] = "Details";
@@ -33,6 +44,18 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Periocity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EndDate)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IdAircraftNavigation)

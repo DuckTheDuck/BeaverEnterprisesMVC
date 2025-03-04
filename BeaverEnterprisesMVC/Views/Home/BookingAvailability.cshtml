@@ -28,7 +28,7 @@
     </div>
     <div class="modify-section">
         <div class=" centerBookingHeaad">
-            <form id="departurebookingForm" action="/Home/BookingAvailability" method="post" onsubmit="return validateForm()">
+            <form id="departurebookingForm" action="/Home/BookingAvailability" method="post" onsubmit="return validateFormModify()">
                 <div class="search-box">
                     <h2>Find Your Flight</h2>
 
@@ -58,6 +58,11 @@
                             <label for="book-arrival">Chegada</label>
                             <input type="date" class="form-control" name="Arrival" id="book-arrival" value="@ViewBag.Arrival">
                         </div>
+
+                        <div class="divider">
+                            <label for="book-passengers">Passageiros</label>
+                            <input type="number" class="form-control" name="Passengers" id="book-passengers" min="1" value="@ViewBag.Passengers">
+                        </div>
                         <input type="submit" class="bttpesquisar" value="Pesquisar" id="book-bttbooking">
                     </div>
                 </div>
@@ -70,62 +75,65 @@
         </button>
     </div>
 
-    <h2>Detalhes da Reserva</h2>
-    <p><strong>Origem:</strong> @ViewBag.Origin</p>
-    <p><strong>Destino:</strong> @ViewBag.Destination</p>
-    <p><strong>Partida:</strong> @ViewBag.Departure</p>
-    <p><strong>Chegada:</strong> @ViewBag.Arrival</p>
-
-
     <div class="container mt-4">
-        <h2>Please select your departure</h2>
-        <h4>@ViewBag.Origin to @ViewBag.Destination</h4>
-
-        @foreach (var flight in Model)
-
+        <h3>Available Flights</h3>
+        @if (Model.Count == 0)
         {
-            <div class="flight-card">
-                <div class="flight-header">
-                    <div>
-                        <div class="flight-time">@flight.DepartureTime</div>
-                        <div class="text-muted">@flight.IdOriginNavigation.Name - Terminal 1</div>
-                    </div>
-                    <div>
-                        <div class="flight-duration">Duration</div>
-                        <div class="text-muted">6h 45m</div>
-                    </div>
-                    <div>
-                        <div class="flight-time">@flight.ArrivalTime</div>
-                        <div class="text-muted">@flight.IdDestinationNavigation.Name - Terminal 1</div>
-                    </div>
-                    <div class="flight-airline">
-                        ✈ Operated by @flight.IdAircraftNavigation.Model
-                    </div>
-                    <div class="d-flex">
-                        <div class="price-box economy" onclick="selectClass(this, 'Economy')">
-                            <p>Economy</p>
-                            <h4>€581.02</h4>
+        
+            <div class="alert alert-warning" role="alert">
+                Nenhum voo encontrado para os critérios selecionados.
+            </div>
+        }
+
+        else
+        {
+            @foreach (var flight in Model)
+            {
+                <div class="flight-card">
+                    <div class="flight-header">
+                        <div>
+                            <div class="flight-time">@flight.DepartureTime</div>
+                            <div class="text-muted">@flight.IdOriginNavigation.Name - Terminal 1</div>
                         </div>
-                        <div class="price-box class" onclick="selectClass(this, 'Premium Economy')">
-                            <p>Premium Economy</p>
-                            <h4>€1014.11</h4>
+                        <div>
+                            <div class="flight-duration">Duration</div>
+                            <div class="text-muted">6h 45m</div>
                         </div>
-                        <div class="price-box class" onclick="selectClass(this, 'First Class')">
-                            <p>First Class</p>
-                            <h4>€1683.87</h4>
+                        <div>
+                            <div class="flight-time">@flight.ArrivalTime</div>
+                            <div class="text-muted">@flight.IdDestinationNavigation.Name - Terminal 1</div>
                         </div>
-                        <div class="price-box class" onclick="selectClass(this, 'Business')">
-                            <p>Business</p>
-                            <h4>€2034.87</h4>
+                        <div class="flight-airline">
+                            ✈ Operated by @flight.IdAircraftNavigation.Model
+                        </div>
+                        <div class="d-flex">
+                            <div class="price-box economy" onclick="selectClass(this, 'Economy')">
+                                <p>Economy</p>
+                                <h4>€581.02</h4>
+                            </div>
+                            <div class="price-box class" onclick="selectClass(this, 'Premium Economy')">
+                                <p>Premium Economy</p>
+                                <h4>€1014.11</h4>
+                            </div>
+                            <div class="price-box class" onclick="selectClass(this, 'First Class')">
+                                <p>First Class</p>
+                                <h4>€1683.87</h4>
+                            </div>
+                            <div class="price-box class" onclick="selectClass(this, 'Business')">
+                                <p>Business</p>
+                                <h4>€2034.87</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        } 
     </div>
+
     <div class="container text-end mt-4">
         <button class="btn-primary-booking-search" onclick="confirmSelection()">Select</button>
     </div>
+
     <footer class="footer text-center">
         <p>&copy; 2025 Airline. All Rights Reserved.</p>
     </footer>
@@ -143,7 +151,7 @@
             // Adiciona a classe "selected" apenas ao elemento clicado
             element.classList.add('selected');
         }
-        function confirmSelection() {
+                        function confirmSelection() {
             let selected = document.querySelector('.price-box.selected');
             if (!selected) {
                 alert("Por favor, seleciona uma classe antes de continuar!");
@@ -155,12 +163,13 @@
             let destination = document.getElementById('book-airport-input-Destination').value;
             let departure = document.getElementById('book-departure').value;
             let arrival = document.getElementById('book-arrival').value;
+            let passengers = document.getElementById('book-passengers').value;
 
             // Pegando a classe selecionada
             let selectedClass = selected.querySelector('p').innerText.trim();
 
             // Criando a URL com parâmetros
-            let url = `@Url.Action("BookingAvailabilityReturn", "Home")?Origin=${encodeURIComponent(origin)}&Destination=${encodeURIComponent(destination)}&Departure=${encodeURIComponent(departure)}&Arrival=${encodeURIComponent(arrival)}&Class=${encodeURIComponent(selectedClass)}`;
+            let url = `@Url.Action("BookingAvailabilityReturn", "Home")?Origin=${encodeURIComponent(origin)}&Destination=${encodeURIComponent(destination)}&Departure=${encodeURIComponent(departure)}&Arrival=${encodeURIComponent(arrival)}&Passengers=${encodeURIComponent(passengers)}&Class=${encodeURIComponent(selectedClass)}`;
 
             // Redirecionando para a nova página
             window.location.href = url;
