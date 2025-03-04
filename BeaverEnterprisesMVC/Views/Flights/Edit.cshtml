@@ -1,14 +1,4 @@
 ﻿@model BeaverEnterprisesMVC.Models.Flight
-@{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-}
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
-
-<!-- jQuery e DataTables JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 
 @{
     ViewData["Title"] = "Edit";
@@ -84,3 +74,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

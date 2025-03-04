@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BeaverEnterprisesMVC.Models.Cart>
+﻿@model IEnumerable<BeaverEnterprisesMVC.Models.Order>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,13 +13,13 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IdAccountNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdTicketNavigation)
             </th>
             <th></th>
         </tr>
@@ -28,13 +28,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IdAccountNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdTicketNavigation.Id)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

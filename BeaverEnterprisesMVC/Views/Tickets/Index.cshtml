@@ -16,6 +16,12 @@
                 @Html.DisplayNameFor(model => model.SeatNumber)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.IdFlightScheduleNavigation)
             </th>
             <th>
@@ -29,6 +35,12 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.SeatNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IdFlightScheduleNavigation.Id)

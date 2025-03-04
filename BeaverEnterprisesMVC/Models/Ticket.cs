@@ -9,13 +9,17 @@ public partial class Ticket
 
     public int IdPassager { get; set; }
 
-    public string? SeatNumber { get; set; }
+    public int? SeatNumber { get; set; }
 
     public int IdFlightSchedule { get; set; }
 
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public double? Price { get; set; }
+
+    public string Status { get; set; } = null!;
 
     public virtual Flightschedule IdFlightScheduleNavigation { get; set; } = null!;
 
     public virtual Passenger IdPassagerNavigation { get; set; } = null!;
+
+    public virtual ICollection<Orderbuy> Orderbuys { get; set; } = new List<Orderbuy>();
 }

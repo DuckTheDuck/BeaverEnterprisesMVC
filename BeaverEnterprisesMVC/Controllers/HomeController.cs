@@ -4,6 +4,7 @@ using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -41,21 +42,21 @@ namespace BeaverEnterprisesMVC.Controllers
         public IActionResult Cart()
         {
             // Inicializa o contexto do banco de dados
-            using (BeaverEnterprisesContext entities = new BeaverEnterprisesContext())
-            {
-                int? currentUser = HttpContext.Session.GetInt32("CurrentUserID");
+            //using (BeaverEnterprisesContext entities = new BeaverEnterprisesContext())
+            //{
+            //    int? currentUser = HttpContext.Session.GetInt32("CurrentUserID");
 
-                if (currentUser == null)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
+            //    if (currentUser == null)
+            //    {
+            //        return RedirectToAction("Login", "Account");
+            //    }
 
-                List<Cart> listcard = entities.Carts
-                    .Where(c => c.IdAccount == currentUser && c.Status == "por comprar")
-                    .ToList();
-
-                return View(listcard);
-            }
+            //    List<Cart> listcard = entities.Carts
+            //        .Where(c => c.IdAccount == currentUser && c.Status == "por comprar")
+            //        .ToList();
+            //listcard
+                return View();
+            //}
         }
 
         public IActionResult PassengerInformation()
@@ -158,6 +159,13 @@ namespace BeaverEnterprisesMVC.Controllers
                     }
                 }
 
+                // Carregar todas as classes disponíveis na base de dados
+                var allClasses = await _context.Classes.ToListAsync();
+
+                // Passar as classes para a view usando ViewBag
+                ViewBag.Classes = allClasses;
+
+                // Passar os voos para a view
                 return View(allFlights);
             }
             catch (Exception ex)
@@ -167,6 +175,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 return StatusCode(500, "Ocorreu um erro interno ao processar a solicitação.");
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> BookingAvailabilityReturn(string Origin, string Destination, string Departure, string Arrival, int Passengers)
@@ -218,6 +227,13 @@ namespace BeaverEnterprisesMVC.Controllers
                     .OrderBy(f => f.DepartureTime)
                     .ToList();
 
+                // Carregar todas as classes disponíveis na base de dados
+                var allClasses = await _context.Classes.ToListAsync();
+
+                // Passar as classes para a view usando ViewBag
+                ViewBag.Classes = allClasses;
+
+                // Passar os voos de volta para a view
                 return View(allFlightsVolta);
             }
             catch (Exception ex)
@@ -227,5 +243,6 @@ namespace BeaverEnterprisesMVC.Controllers
                 return StatusCode(500, "Ocorreu um erro interno ao processar a solicitação.");
             }
         }
+
     }
 }

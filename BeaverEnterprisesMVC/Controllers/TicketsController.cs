@@ -58,7 +58,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IdPassager,SeatNumber,IdFlightSchedule")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,IdPassager,SeatNumber,IdFlightSchedule,Price,Status")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
@@ -94,7 +94,7 @@ namespace BeaverEnterprisesMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdPassager,SeatNumber,IdFlightSchedule")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdPassager,SeatNumber,IdFlightSchedule,Price,Status")] Ticket ticket)
         {
             if (id != ticket.Id)
             {

@@ -79,12 +79,10 @@
         <h3>Available Flights</h3>
         @if (Model.Count == 0)
         {
-        
             <div class="alert alert-warning" role="alert">
                 Nenhum voo encontrado para os critérios selecionados.
             </div>
         }
-
         else
         {
             @foreach (var flight in Model)
@@ -107,28 +105,20 @@
                             ✈ Operated by @flight.IdAircraftNavigation.Model
                         </div>
                         <div class="d-flex">
-                            <div class="price-box economy" onclick="selectClass(this, 'Economy')">
-                                <p>Economy</p>
-                                <h4>€581.02</h4>
-                            </div>
-                            <div class="price-box class" onclick="selectClass(this, 'Premium Economy')">
-                                <p>Premium Economy</p>
-                                <h4>€1014.11</h4>
-                            </div>
-                            <div class="price-box class" onclick="selectClass(this, 'First Class')">
-                                <p>First Class</p>
-                                <h4>€1683.87</h4>
-                            </div>
-                            <div class="price-box class" onclick="selectClass(this, 'Business')">
-                                <p>Business</p>
-                                <h4>€2034.87</h4>
-                            </div>
+                            @foreach (var classItem in ViewBag.Classes)
+                            {
+                                <div class="price-box economy" onclick="selectClass(this, '@classItem.Name')">
+                                    <p>@classItem.Name</p>
+                                    <h4>€@classItem.Price</h4>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
             }
-        } 
+        }
     </div>
+
 
     <div class="container text-end mt-4">
         <button class="btn-primary-booking-search" onclick="confirmSelection()">Select</button>

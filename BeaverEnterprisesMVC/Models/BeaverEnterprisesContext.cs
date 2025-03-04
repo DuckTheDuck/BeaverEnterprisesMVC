@@ -19,8 +19,6 @@ public partial class BeaverEnterprisesContext : DbContext
 
     public virtual DbSet<Aircraft> Aircraft { get; set; }
 
-    public virtual DbSet<Cart> Carts { get; set; }
-
     public virtual DbSet<Class> Classes { get; set; }
 
     public virtual DbSet<Employee> Employees { get; set; }
@@ -35,15 +33,17 @@ public partial class BeaverEnterprisesContext : DbContext
 
     public virtual DbSet<Manufacturer> Manufacturers { get; set; }
 
-    public virtual DbSet<Passenger> Passengers { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<Reservation> Reservations { get; set; }
+    public virtual DbSet<Orderbuy> Orderbuys { get; set; }
+
+    public virtual DbSet<Passenger> Passengers { get; set; }
 
     public virtual DbSet<Ticket> Tickets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-N4C79H0;Database=BeaverEnterprises;Trusted_Connection=True;Persist Security Info=True;TrustServerCertificate=True;MultipleActiveResultSets=True;");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-6ARNHA2\\MSSQLSERVER01;Database=BeaverEnterprises;Trusted_Connection=True;Persist Security Info=True;TrustServerCertificate=True;MultipleActiveResultSets=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -92,29 +92,6 @@ public partial class BeaverEnterprisesContext : DbContext
             entity.HasOne(d => d.IdManufacturerNavigation).WithMany(p => p.Aircraft)
                 .HasForeignKey(d => d.IdManufacturer)
                 .HasConstraintName("FK_AIRCRAFT_MANUFACTURER");
-        });
-
-        modelBuilder.Entity<Cart>(entity =>
-        {
-            entity.ToTable("CART");
-
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.IdAccount).HasColumnName("ID_ACCOUNT");
-            entity.Property(e => e.IdTicket).HasColumnName("ID_TICKET");
-            entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("STATUS");
-
-            entity.HasOne(d => d.IdAccountNavigation).WithMany(p => p.Carts)
-                .HasForeignKey(d => d.IdAccount)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CART_ACCOUNT");
-
-            entity.HasOne(d => d.IdTicketNavigation).WithMany(p => p.Carts)
-                .HasForeignKey(d => d.IdTicket)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CART_TICKET");
         });
 
         modelBuilder.Entity<Class>(entity =>
@@ -298,6 +275,43 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasColumnName("NAME");
         });
 
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.ToTable("ORDER");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Date).HasColumnName("DATE");
+            entity.Property(e => e.IdAccount).HasColumnName("ID_ACCOUNT");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("STATUS");
+
+            entity.HasOne(d => d.IdAccountNavigation).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.IdAccount)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ORDER_ACCOUNT");
+        });
+
+        modelBuilder.Entity<Orderbuy>(entity =>
+        {
+            entity.ToTable("ORDERBUY");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.IdOrder).HasColumnName("ID_ORDER");
+            entity.Property(e => e.IdTicket).HasColumnName("ID_TICKET");
+
+            entity.HasOne(d => d.IdOrderNavigation).WithMany(p => p.Orderbuys)
+                .HasForeignKey(d => d.IdOrder)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ORDERBUY_ORDER");
+
+            entity.HasOne(d => d.IdTicketNavigation).WithMany(p => p.Orderbuys)
+                .HasForeignKey(d => d.IdTicket)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ORDERBUY_TICKET");
+        });
+
         modelBuilder.Entity<Passenger>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__PASSENGE__AA1D4378A951ADE7");
@@ -320,28 +334,6 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasColumnName("SURNAME");
         });
 
-        modelBuilder.Entity<Reservation>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__RESERVAT__AA1D43784082D5C0");
-
-            entity.ToTable("RESERVATION");
-
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Confirmed).HasColumnName("CONFIRMED");
-            entity.Property(e => e.IdFlight).HasColumnName("ID_FLIGHT");
-            entity.Property(e => e.IdPassenger).HasColumnName("ID_PASSENGER");
-
-            entity.HasOne(d => d.IdFlightNavigation).WithMany(p => p.Reservations)
-                .HasForeignKey(d => d.IdFlight)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RESERVATION_FLIGHTS");
-
-            entity.HasOne(d => d.IdPassengerNavigation).WithMany(p => p.Reservations)
-                .HasForeignKey(d => d.IdPassenger)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__RESERVATI__PASSE__5070F446");
-        });
-
         modelBuilder.Entity<Ticket>(entity =>
         {
             entity.ToTable("TICKET");
@@ -349,10 +341,12 @@ public partial class BeaverEnterprisesContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdFlightSchedule).HasColumnName("ID_FLIGHT_SCHEDULE");
             entity.Property(e => e.IdPassager).HasColumnName("ID_PASSAGER");
-            entity.Property(e => e.SeatNumber)
+            entity.Property(e => e.Price).HasColumnName("PRICE");
+            entity.Property(e => e.SeatNumber).HasColumnName("SEAT_NUMBER");
+            entity.Property(e => e.Status)
                 .HasMaxLength(150)
                 .IsUnicode(false)
-                .HasColumnName("SEAT_NUMBER");
+                .HasColumnName("STATUS");
 
             entity.HasOne(d => d.IdFlightScheduleNavigation).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.IdFlightSchedule)

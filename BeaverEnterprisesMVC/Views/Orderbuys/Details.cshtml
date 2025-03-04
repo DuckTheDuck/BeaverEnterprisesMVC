@@ -1,4 +1,4 @@
-﻿@model BeaverEnterprisesMVC.Models.Cart
+﻿@model BeaverEnterprisesMVC.Models.Orderbuy
 
 @{
     ViewData["Title"] = "Details";
@@ -7,20 +7,14 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Cart</h4>
+    <h4>Orderbuy</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
+            @Html.DisplayNameFor(model => model.IdOrderNavigation)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdAccountNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdAccountNavigation.Id)
+            @Html.DisplayFor(model => model.IdOrderNavigation.Id)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IdTicketNavigation)
