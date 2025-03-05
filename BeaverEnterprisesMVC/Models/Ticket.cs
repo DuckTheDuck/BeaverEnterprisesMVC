@@ -7,7 +7,7 @@ public partial class Ticket
 {
     public int Id { get; set; }
 
-    public int IdPassager { get; set; }
+    public int? IdPassager { get; set; }
 
     public int? SeatNumber { get; set; }
 

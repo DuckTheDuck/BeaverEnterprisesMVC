@@ -4,7 +4,6 @@ using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -33,6 +32,7 @@ namespace BeaverEnterprisesMVC.Controllers
 
         public IActionResult BookingAvailability()
         {
+
             return View();
         }
         public IActionResult BookingAvailabilityReturn()
@@ -41,23 +41,38 @@ namespace BeaverEnterprisesMVC.Controllers
         }
         public IActionResult Cart()
         {
-            // Inicializa o contexto do banco de dados
-            //using (BeaverEnterprisesContext entities = new BeaverEnterprisesContext())
-            //{
-            //    int? currentUser = HttpContext.Session.GetInt32("CurrentUserID");
+            using (var entities = new BeaverEnterprisesContext())
+            {
+                int? currentUserID = HttpContext.Session.GetInt32("CurrentUserID");
 
-            //    if (currentUser == null)
-            //    {
-            //        return RedirectToAction("Login", "Account");
-            //    }
+                if (currentUserID == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
 
-            //    List<Cart> listcard = entities.Carts
-            //        .Where(c => c.IdAccount == currentUser && c.Status == "por comprar")
-            //        .ToList();
-            //listcard
-                return View();
-            //}
+                var tickets = entities.Orderbuys
+                    .Include(ob => ob.IdTicketNavigation)
+                    .ThenInclude(t => t.IdFlightScheduleNavigation)
+                    .ThenInclude(fs => fs.IdFlightNavigation)
+                    .Where(ob => ob.IdOrderNavigation.Status == "Por pagar" && ob.IdOrderNavigation.IdAccount == currentUserID)
+                    .Select(ob => ob.IdTicketNavigation)
+                    .ToList();
+
+                // Optional: Check if flight-related data is null in your tickets
+                foreach (var ticket in tickets)
+                {
+                    if (ticket?.IdFlightScheduleNavigation?.IdFlightNavigation == null)
+                    {
+                        // Handle the case where the flight is null, if needed
+                        // e.g., log or skip this ticket
+                    }
+                }
+
+                return View(tickets);
+            }
         }
+
+
 
         public IActionResult PassengerInformation()
         {
@@ -85,24 +100,24 @@ namespace BeaverEnterprisesMVC.Controllers
 
        
         [HttpPost]
-
         public IActionResult Login(string email, string password)
         {
-            //if (email == "admin@gmail.com" && password == "admin")
-            //{
-            //    return RedirectToAction("Create", "Manufacturers");
-            //}
+            if (email == "admin@gmail.com" && password == "admin")
+            {
+                return RedirectToAction("Create", "Manufacturers");
+            }
 
-            //var user = _context.Passengers.FirstOrDefault(u => u.Gmail == email && u.Password == password);
-            //if (user != null)
-            //{
-            //    HttpContext.Session.SetInt32("CurrentUserID", user.Id);
-            //    return RedirectToAction("Index", "Home");
-            //}
+            var user = _context.Accounts.FirstOrDefault(u => u.Email == email && u.Password == password);
+            if (user != null)
+            {
+                HttpContext.Session.SetInt32("CurrentUserID", user.Id);
+                return RedirectToAction("Index", "Home");
+            }
 
             ViewBag.Error = "Invalid username or password.";
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> BookingAvailability(string Origin, string Destination, string Departure, string Arrival, int Passengers)
         {
@@ -122,6 +137,8 @@ namespace BeaverEnterprisesMVC.Controllers
                 {
                     return BadRequest("Formato de data inválido.");
                 }
+
+                HttpContext.Session.SetInt32("PassengersCount", Passengers);
 
                 ViewBag.Origin = Origin;
                 ViewBag.Destination = Destination;

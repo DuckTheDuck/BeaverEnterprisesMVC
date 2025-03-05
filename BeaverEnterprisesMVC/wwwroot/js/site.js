@@ -99,6 +99,7 @@ function validateForm() {
     if (departureDate < today) { alert("A data de partida não pode ser inferior à data de hoje!"); return false; }
     if (arrivalDate < departureDate) { alert("A data de chegada não pode ser antes da data de partida!"); return false; }
 
+    
     return true;
 }
 

@@ -25,101 +25,57 @@
     </div>
 
 
-    @* @{
-        foreach(Cart cart in Model)
+    @foreach (var ticket in Model)
+    {
+        var flight = ticket?.IdFlightScheduleNavigation?.IdFlightNavigation;
+
+        @if (flight != null && flight.IdOriginNavigation != null && flight.IdDestinationNavigation != null)
         {
             <div class="container mt-4">
                 <h2>Your Selection</h2>
-                <h4>Geneva to Lisbon</h4>
+                <h4>@flight.IdOriginNavigation.Name to @flight.IdDestinationNavigation.Name</h4>
                 <h6>Your flights</h6>
                 <div class="flight-card">
                     <div class="flight-header">
                         <div>
-                            <div class="flight-time">19:55</div>
-                            <div class="text-muted">CDG - Terminal 1</div>
+                            <div class="flight-time">@flight.DepartureTime?.ToString("HH:mm")</div>
+                            <div class="text-muted">@flight.IdOriginNavigation.Name - Terminal 1</div>
                         </div>
                         <div>
-                            <div class="flight-duration">6h 45m BRU</div>
-                            <div class="text-muted">Duration: 10h 35m</div>
+                            <div class="flight-duration">Direct</div>
+                            <div class="text-muted">
+                                Duration: @(flight.ArrivalTime.HasValue && flight.DepartureTime.HasValue
+                          ? (flight.ArrivalTime - flight.DepartureTime).Value.TotalHours : 0)h
+                            </div>
                         </div>
                         <div>
-                            <div class="flight-time">07:30 +1 day</div>
-                            <div class="text-muted">LIS - Terminal 1</div>
+                            <div class="flight-time">@flight.ArrivalTime?.ToString("HH:mm")</div>
+                            <div class="text-muted">@flight.IdDestinationNavigation.Name - Terminal 1</div>
                         </div>
                         <div class="flight-airline">
-                            ✈ Operated by TAP Air Portugal, Brussels Airlines
+                            ✈ Operated by TAP Air Portugal
                         </div>
                         <div class="d-flex">
                             <div class="price-box economy" onclick="selectClass(this, 'economy')">
                                 <p>Economy</p>
-                                <h4>€581.02</h4>
+                                <h4>€@(ticket?.Price ?? 0)</h4>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         }
-    } *@
-
-
-
-    <div class="container mt-4">
-        <h2>Your Selection</h2>
-        <h4>Geneva to Lisbon</h4>
-        <h6>Your flights</h6>
-        <div class="flight-card">
-            <div class="flight-header">
-                <div>
-                    <div class="flight-time">19:55</div>
-                    <div class="text-muted">CDG - Terminal 1</div>
-                </div>
-                <div>
-                    <div class="flight-duration">6h 45m BRU</div>
-                    <div class="text-muted">Duration: 10h 35m</div>
-                </div>
-                <div>
-                    <div class="flight-time">07:30 +1 day</div>
-                    <div class="text-muted">LIS - Terminal 1</div>
-                </div>
-                <div class="flight-airline">
-                    ✈ Operated by TAP Air Portugal, Brussels Airlines
-                </div>
-                <div class="d-flex">
-                    <div class="price-box economy" onclick="selectClass(this, 'economy')">
-                        <p>Economy</p>
-                        <h4>€581.02</h4>
-                    </div>
-                </div>
+        else
+        {
+            <div class="container mt-4">
+                <p>Flight information not available.</p>
             </div>
-        </div>
-    </div>
-    <div class="container mt-4">
-        <div class="flight-card">
-            <div class="flight-header">
-                <div>
-                    <div class="flight-time">20:55</div>
-                    <div class="text-muted">GEN - Terminal 1</div>
-                </div>
-                <div>
-                    <div class="flight-duration">6h 45m BRU</div>
-                    <div class="text-muted">Duration: 10h 35m</div>
-                </div>
-                <div>
-                    <div class="flight-time">08:30 +1 day</div>
-                    <div class="text-muted">LIS - Terminal 1</div>
-                </div>
-                <div class="flight-airline">
-                    ✈ Operated by TAP Air Portugal, Brussels Airlines
-                </div>
-                <div class="d-flex">
-                    <div class="price-box economy" onclick="selectClass(this, 'economy')">
-                        <p>Economy</p>
-                        <h4>€223.99</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        }
+    }
+
+
+
+
     <h4 id="total-price-display" style="display: none; text-align: right; margin-right: 305px;">
         Total Price: EUR 805.01
     </h4>
