@@ -24,61 +24,13 @@
         </div>
     </div>
 
+    <h4>Flights:</h4>
+    <ul id="flight-list"></ul>
 
-    @foreach (var ticket in Model)
-    {
-        var flight = ticket?.IdFlightScheduleNavigation?.IdFlightNavigation;
-
-        @if (flight != null && flight.IdOriginNavigation != null && flight.IdDestinationNavigation != null)
-        {
-            <div class="container mt-4">
-                <h2>Your Selection</h2>
-                <h4>@flight.IdOriginNavigation.Name to @flight.IdDestinationNavigation.Name</h4>
-                <h6>Your flights</h6>
-                <div class="flight-card">
-                    <div class="flight-header">
-                        <div>
-                            <div class="flight-time">@flight.DepartureTime?.ToString("HH:mm")</div>
-                            <div class="text-muted">@flight.IdOriginNavigation.Name - Terminal 1</div>
-                        </div>
-                        <div>
-                            <div class="flight-duration">Direct</div>
-                            <div class="text-muted">
-                                Duration: @(flight.ArrivalTime.HasValue && flight.DepartureTime.HasValue
-                          ? (flight.ArrivalTime - flight.DepartureTime).Value.TotalHours : 0)h
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flight-time">@flight.ArrivalTime?.ToString("HH:mm")</div>
-                            <div class="text-muted">@flight.IdDestinationNavigation.Name - Terminal 1</div>
-                        </div>
-                        <div class="flight-airline">
-                            ✈ Operated by TAP Air Portugal
-                        </div>
-                        <div class="d-flex">
-                            <div class="price-box economy" onclick="selectClass(this, 'economy')">
-                                <p>Economy</p>
-                                <h4>€@(ticket?.Price ?? 0)</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="container mt-4">
-                <p>Flight information not available.</p>
-            </div>
-        }
-    }
-
-
-
-
-    <h4 id="total-price-display" style="display: none; text-align: right; margin-right: 305px;">
-        Total Price: EUR 805.01
+    <h4 id="total-price-display" style="text-align: right; margin-right: 305px;">
+        Total Price: EUR <span id="total-price">0.00</span>
     </h4>
+
     <div class="container mt-4">
         <div class="passenger-info-card">
             <h2>Passenger Information</h2>
@@ -270,6 +222,7 @@
                 contactInfo.style.display = 'block';
             }
         }
+
         function confirmSelection() {
             // Mostra as informações do passageiro
             document.querySelector('.passenger-info-card').style.display = 'block';
@@ -284,6 +237,113 @@
             // Redireciona para a página "PassengerInformation"
             window.location.href = '@Url.Action("PassengerInformation", "Home")';
         }
+
+        function calculateDuration(departureTime, arrivalTime) {
+            const [depHours, depMinutes] = departureTime.split(':').map(Number);
+            const [arrHours, arrMinutes] = arrivalTime.split(':').map(Number);
+
+            let depTotal = depHours * 60 + depMinutes;
+            let arrTotal = arrHours * 60 + arrMinutes;
+
+            if (arrTotal < depTotal) {
+                arrTotal += 24 * 60;
+            }
+
+            const durationMinutes = arrTotal - depTotal;
+            const hours = Math.floor(durationMinutes / 60);
+            const minutes = durationMinutes % 60;
+
+            return `${hours}h ${minutes}m`;
+        }
+
+            function loadFlightsFromCart() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            console.log("Carregando cart do localStorage:", cart);
+            let flightList = document.getElementById("flight-list");
+            let totalPrice = 0;
+
+            flightList.innerHTML = "";
+
+            if (cart.length === 0) {
+                console.log("Nenhum item no cart.");
+                flightList.innerHTML = "<li>Nenhum voo selecionado.</li>";
+                return;
+            }
+
+            cart.forEach(item => {
+                console.log("Processando item:", item);
+                totalPrice += item.price || 0;
+
+                let duration = calculateDuration(item.departureTime, item.arrivalTime);
+
+                let flightCard = `
+                    <li>
+                        <div class="flight-card">
+                            <div class="flight-header">
+                                <div>
+                                    <div class="flight-time">${item.departureTime || "N/A"}</div>
+                                    <div class="text-muted">${item.origin || "N/A"} - Terminal 1</div>
+                                </div>
+                                <div>
+                                    <div class="flight-duration">Duration</div>
+                                    <div class="text-muted">${duration}</div>
+                                </div>
+                                <div>
+                                    <div class="flight-time">${item.arrivalTime || "N/A"}</div>
+                                    <div class="text-muted">${item.destination || "N/A"} - Terminal 1</div>
+                                </div>
+                                <div class="flight-airline">
+                                    ✈ Operated by ${item.aircraft || "N/A"}
+                                </div>
+                                <div class="d-flex">
+                                    <div class="price-box economy">
+                                        <p>${item.className || "N/A"}</p>
+                                        <h4>€${(item.price || 0).toFixed(2)}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                flightList.innerHTML += flightCard;
+            });
+
+            document.getElementById("total-price").textContent = totalPrice.toFixed(2);
+            console.log("HTML gerado para flightList:", flightList.innerHTML);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            console.log("Carregando cart do localStorage no DOMContentLoaded:", cart);
+
+            if (cart.length > 0) {
+                // Filtra apenas os campos necessários para enviar ao backend
+                let simplifiedCart = cart.map(item => ({
+                    idFlightSchedule: item.idFlightSchedule,
+                    price: item.price
+                }));
+
+                fetch('@Url.Action("Cart", "Home")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(simplifiedCart)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Cart enviado para o backend com sucesso!");
+                        loadFlightsFromCart(); // Carrega os voos na interface
+                    } else {
+                        console.error("Erro ao enviar cart para o backend.");
+                    }
+                })
+                .catch(error => console.error("Erro na requisição:", error));
+            } else {
+                console.log("Cart vazio, nada enviado ao backend.");
+                loadFlightsFromCart();
+            }
+        });
     </script>
 </body>
 </html>

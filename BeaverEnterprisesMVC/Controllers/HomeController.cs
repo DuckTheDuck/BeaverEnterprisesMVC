@@ -39,37 +39,44 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
-        public IActionResult Cart()
-        {
-            using (var entities = new BeaverEnterprisesContext())
-            {
-                int? currentUserID = HttpContext.Session.GetInt32("CurrentUserID");
 
-                if (currentUserID == null)
+        [HttpPost]
+        public IActionResult Cart([FromBody] List<Ticket> tickets)
+        {
+            try
+            {
+                if (tickets == null || !tickets.Any())
                 {
-                    return RedirectToAction("Login", "Account");
+                    return Json(new { success = false, message = "Lista de tickets vazia." });
                 }
 
-                var tickets = entities.Orderbuys
-                    .Include(ob => ob.IdTicketNavigation)
-                    .ThenInclude(t => t.IdFlightScheduleNavigation)
-                    .ThenInclude(fs => fs.IdFlightNavigation)
-                    .Where(ob => ob.IdOrderNavigation.Status == "Por pagar" && ob.IdOrderNavigation.IdAccount == currentUserID)
-                    .Select(ob => ob.IdTicketNavigation)
-                    .ToList();
-
-                // Optional: Check if flight-related data is null in your tickets
+                // Aqui você pode trabalhar com a List<Ticket> diretamente
                 foreach (var ticket in tickets)
                 {
-                    if (ticket?.IdFlightScheduleNavigation?.IdFlightNavigation == null)
-                    {
-                        // Handle the case where the flight is null, if needed
-                        // e.g., log or skip this ticket
-                    }
+                    Console.WriteLine($"Ticket: IdFlightSchedule={ticket.IdFlightSchedule}, Price={ticket.Price}, Status={ticket.Status}");
+                    // Não salva no banco, apenas processa a lista recebida
                 }
 
-                return View(tickets);
+                return Json(new { success = true, tickets = tickets });
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar os tickets.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // Ação GET para exibir a página do carrinho
+        [HttpGet]
+        public IActionResult Cart()
+        {
+            // Recupera os tickets do banco de dados (opcional, dependendo do que você quer mostrar)
+            var tickets = _context.Tickets
+                .Where(t => t.Status == "Por validar") // Filtra tickets pendentes, se desejar
+                .ToList();
+
+            // Retorna a view Cart.cshtml, passando os tickets como modelo (se necessário)
+            return View(tickets);
         }
 
 
@@ -138,8 +145,6 @@ namespace BeaverEnterprisesMVC.Controllers
                     return BadRequest("Formato de data inválido.");
                 }
 
-                HttpContext.Session.SetInt32("PassengersCount", Passengers);
-
                 ViewBag.Origin = Origin;
                 ViewBag.Destination = Destination;
                 ViewBag.Departure = Departure;
@@ -149,45 +154,37 @@ namespace BeaverEnterprisesMVC.Controllers
                 // Converter para DateOnly (apenas a data, sem horário)
                 DateOnly departureDateOnly = DateOnly.FromDateTime(departureDate);
 
-                // Consulta na tabela Flightschedules
-                var flightsFromScheduleTable = await _context.Flightschedules
+                // Consulta na tabela Flightschedules, retornando FlightSchedule diretamente
+                var flightSchedules = await _context.Flightschedules
                     .Include(fs => fs.IdFlightNavigation)
                     .ThenInclude(f => f.IdOriginNavigation)
                     .Include(fs => fs.IdFlightNavigation.IdDestinationNavigation)
                     .Include(fs => fs.IdFlightNavigation.IdAircraftNavigation)
                     .Include(fs => fs.IdFlightNavigation.IdClassNavigation)
-                    .Where(fs => fs.FlightDate == departureDateOnly && // Filtra apenas pelo dia da partida
+                    .Where(fs => fs.FlightDate == departureDateOnly &&
                                  fs.IdFlightNavigation.IdOriginNavigation.Name == Origin &&
                                  fs.IdFlightNavigation.IdDestinationNavigation.Name == Destination)
-                    .Select(fs => fs.IdFlightNavigation)
+                    .OrderBy(fs => fs.IdFlightNavigation.DepartureTime) // Ordenar pelo horário de partida
                     .ToListAsync();
 
-                // Ordenar os voos pelo horário de partida (do mais cedo para o mais tarde)
-                var allFlights = flightsFromScheduleTable
-                    .OrderBy(f => f.DepartureTime) // Ordenar pelo horário de partida
-                    .ToList();
-
                 // Tratar os voos sem aeronave
-                foreach (var flight in allFlights)
+                foreach (var schedule in flightSchedules)
                 {
-                    if (flight.IdAircraftNavigation == null)
+                    if (schedule.IdFlightNavigation.IdAircraftNavigation == null)
                     {
-                        flight.IdAircraftNavigation = new Aircraft(); // Ou criar uma aeronave padrão
+                        schedule.IdFlightNavigation.IdAircraftNavigation = new Aircraft(); // Ou defina um valor padrão
                     }
                 }
 
                 // Carregar todas as classes disponíveis na base de dados
                 var allClasses = await _context.Classes.ToListAsync();
-
-                // Passar as classes para a view usando ViewBag
                 ViewBag.Classes = allClasses;
 
-                // Passar os voos para a view
-                return View(allFlights);
+                // Passar os FlightSchedules para a view
+                return View(flightSchedules);
             }
             catch (Exception ex)
             {
-                // Log da exceção (pode ser substituído por um logger real)
                 Console.Error.WriteLine($"Erro: {ex.Message}");
                 return StatusCode(500, "Ocorreu um erro interno ao processar a solicitação.");
             }
@@ -226,7 +223,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 Console.WriteLine($"[DEBUG] DepartureDateOnly: {departureDateOnly}, ArrivalDateOnly: {arrivalDateOnly}, Today: {today}");
 
                 // Buscar voos de VOLTA (Destino -> Origem) na data correta da volta
-                var flightsFromScheduleTableVolta = await _context.Flightschedules
+                var flightSchedules = await _context.Flightschedules
                     .Include(fs => fs.IdFlightNavigation)
                         .ThenInclude(f => f.IdOriginNavigation)
                     .Include(fs => fs.IdFlightNavigation.IdDestinationNavigation)
@@ -236,13 +233,17 @@ namespace BeaverEnterprisesMVC.Controllers
                                 && fs.IdFlightNavigation.IdOriginNavigation.Name == Destination // Origem do voo de volta é o destino da ida
                                 && fs.IdFlightNavigation.IdDestinationNavigation.Name == Origin // Destino do voo de volta é a origem da ida
                                 && fs.FlightDate >= today) // Apenas voos futuros
-                    .Select(fs => fs.IdFlightNavigation)
+                    .OrderBy(fs => fs.IdFlightNavigation.DepartureTime) // Ordenar pelo horário de partida
                     .ToListAsync();
 
-                // Ordenar os voos pelo horário de partida
-                var allFlightsVolta = flightsFromScheduleTableVolta
-                    .OrderBy(f => f.DepartureTime)
-                    .ToList();
+                // Tratar voos sem aeronave
+                foreach (var schedule in flightSchedules)
+                {
+                    if (schedule.IdFlightNavigation.IdAircraftNavigation == null)
+                    {
+                        schedule.IdFlightNavigation.IdAircraftNavigation = new Aircraft(); // Ou valor padrão
+                    }
+                }
 
                 // Carregar todas as classes disponíveis na base de dados
                 var allClasses = await _context.Classes.ToListAsync();
@@ -250,8 +251,8 @@ namespace BeaverEnterprisesMVC.Controllers
                 // Passar as classes para a view usando ViewBag
                 ViewBag.Classes = allClasses;
 
-                // Passar os voos de volta para a view
-                return View(allFlightsVolta);
+                // Passar os FlightSchedules para a view
+                return View(flightSchedules);
             }
             catch (Exception ex)
             {
