@@ -1,4 +1,4 @@
-
+Ôªø
 using System.Diagnostics;
 using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +26,64 @@ namespace BeaverEnterprisesMVC.Controllers
         {
 
             return View();
+        }
+
+        // POST: Processar o formul√°rio de check-in
+        [HttpPost]
+        public async Task<IActionResult> Index(string TicketCode, string PassengerCode)
+        {
+            // Converter os valores para inteiros
+            if (!int.TryParse(TicketCode, out int ticketId) || !int.TryParse(PassengerCode, out int passengerId))
+            {
+                TempData["ErrorMessage"] = "Os c√≥digos de ticket e passageiro devem ser n√∫meros v√°lidos.";
+                return RedirectToAction("Index");
+            }
+
+            var currentUserId = HttpContext.Session.GetInt32("CurrentUserID");
+            if (currentUserId == null)
+            {
+                return RedirectToAction("Register", "Home");
+            }
+
+            // 1. Verificar se a conta existe
+            var account = await _context.Accounts
+                .FirstOrDefaultAsync(a => a.Id == currentUserId);
+
+            if (account == null)
+            {
+                TempData["ErrorMessageAccount"] = "Conta n√£o encontrada.";
+                return RedirectToAction("Index");
+            }
+
+            // 2. Verificar se o TicketId e o PassengerId est√£o associados √† conta
+            // Consulta expl√≠cita usando Joins para seguir a cadeia Account ‚Üí Order ‚Üí OrderBuy ‚Üí Ticket ‚Üí Passenger
+            var ticket = await (from t in _context.Tickets
+                                join ob in _context.Orderbuys on t.Id equals ob.IdTicket
+                                join o in _context.Orders on ob.IdOrder equals o.Id
+                                join a in _context.Accounts on o.IdAccount equals a.Id
+                                where a.Id == currentUserId && t.Id == ticketId && t.IdPassager == passengerId
+                                select t)
+                              .FirstOrDefaultAsync();
+
+            if (ticket == null)
+            {
+                TempData["ErrorMessageTicket"] = "Ticket n√£o encontrado ou n√£o associado ao passageiro informado para esta conta.";
+                return RedirectToAction("Index");
+            }
+
+            // 3. Realizar o check-in
+            if (ticket.Status == "Validado")
+            {
+                TempData["ErrorMessage"] = "O ticket j√° foi validado anteriormente.";
+                return RedirectToAction("Index");
+            }
+
+            ticket.Status = "Validado";
+            _context.Tickets.Update(ticket);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Check-in realizado com sucesso!";
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
@@ -117,7 +175,7 @@ namespace BeaverEnterprisesMVC.Controllers
             }
         }
 
-        // AÁ„o POST para processar os tickets adicionados ao carrinho
+        // A√ß√£o POST para processar os tickets adicionados ao carrinho
         [HttpPost]
         public IActionResult Cart([FromBody] List<Ticket> tickets)
         {
@@ -134,11 +192,11 @@ namespace BeaverEnterprisesMVC.Controllers
                     // Ensure the ticket has a valid flight schedule
                     if (ticket.IdFlightSchedule == 0)
                     {
-                        return Json(new { success = false, message = "Ticket inv·lido: ID de voo ausente." });
+                        return Json(new { success = false, message = "Ticket inv√°lido: ID de voo ausente." });
                     }
 
                     // Passenger ID should be 0 at this stage (not yet assigned)
-                    ticket.IdPassager = 0; // Explicitly set to 0 since passenger info isnít provided yet
+                    ticket.IdPassager = 0; // Explicitly set to 0 since passenger info isn‚Äôt provided yet
                     ticket.Status = "Por validar"; // Set default status
                 }
 
@@ -163,7 +221,7 @@ namespace BeaverEnterprisesMVC.Controllers
             }
         }
 
-        // AÁ„o POST para remover um ticket do carrinho (session)
+        // A√ß√£o POST para remover um ticket do carrinho (session)
         [HttpPost]
         public IActionResult RemoveTicketFromCart([FromBody] RemoveTicketRequest request)
         {
@@ -181,7 +239,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 // Validate the index
                 if (request.Index < 0 || request.Index >= tickets.Count)
                 {
-                    return Json(new { success = false, message = "Õndice inv·lido." });
+                    return Json(new { success = false, message = "√çndice inv√°lido." });
                 }
 
                 // Remove the ticket at the specified index
@@ -211,7 +269,7 @@ namespace BeaverEnterprisesMVC.Controllers
                     return Json(new { success = false, message = "All fields are required." });
                 }
 
-                // Set SeatNumber to null since itís not provided yet
+                // Set SeatNumber to null since it‚Äôs not provided yet
                 passenger.SeatNumber = null;
 
                 // Save the passenger to the database
@@ -305,10 +363,10 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             try
             {
-                // ValidaÁ„o dos par‚metros de entrada
+                // Valida√ß√£o dos par√¢metros de entrada
                 if (string.IsNullOrEmpty(Origin) || string.IsNullOrEmpty(Destination) || string.IsNullOrEmpty(Departure) || string.IsNullOrEmpty(Arrival) || Passengers <= 0)
                 {
-                    return BadRequest("Par‚metros de entrada inv·lidos.");
+                    return BadRequest("Par√¢metros de entrada inv√°lidos.");
                 }
 
                 DateTime departureDate;
@@ -317,7 +375,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 // Tentar fazer o parsing das datas
                 if (!DateTime.TryParse(Departure, out departureDate) || !DateTime.TryParse(Arrival, out arrivalDate))
                 {
-                    return BadRequest("Formato de data inv·lido.");
+                    return BadRequest("Formato de data inv√°lido.");
                 }
 
                 HttpContext.Session.SetInt32("PassengersCount", Passengers);
@@ -328,7 +386,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 ViewBag.Arrival = Arrival;
                 ViewBag.Passengers = Passengers;
 
-                // Converter para DateOnly (apenas a data, sem hor·rio)
+                // Converter para DateOnly (apenas a data, sem hor√°rio)
                 DateOnly departureDateOnly = DateOnly.FromDateTime(departureDate);
 
                 // Consulta na tabela Flightschedules, retornando FlightSchedule diretamente
@@ -341,7 +399,7 @@ namespace BeaverEnterprisesMVC.Controllers
                     .Where(fs => fs.FlightDate == departureDateOnly &&
                                  fs.IdFlightNavigation.IdOriginNavigation.Name == Origin &&
                                  fs.IdFlightNavigation.IdDestinationNavigation.Name == Destination)
-                    .OrderBy(fs => fs.IdFlightNavigation.DepartureTime) // Ordenar pelo hor·rio de partida
+                    .OrderBy(fs => fs.IdFlightNavigation.DepartureTime) // Ordenar pelo hor√°rio de partida
                     .ToListAsync();
 
                 // Tratar os voos sem aeronave
@@ -349,11 +407,11 @@ namespace BeaverEnterprisesMVC.Controllers
                 {
                     if (schedule.IdFlightNavigation.IdAircraftNavigation == null)
                     {
-                        schedule.IdFlightNavigation.IdAircraftNavigation = new Aircraft(); // Ou defina um valor padr„o
+                        schedule.IdFlightNavigation.IdAircraftNavigation = new Aircraft(); // Ou defina um valor padr√£o
                     }
                 }
 
-                // Carregar todas as classes disponÌveis na base de dados
+                // Carregar todas as classes dispon√≠veis na base de dados
                 var allClasses = await _context.Classes.ToListAsync();
                 ViewBag.Classes = allClasses;
 
@@ -363,7 +421,7 @@ namespace BeaverEnterprisesMVC.Controllers
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Erro: {ex.Message}");
-                return StatusCode(500, "Ocorreu um erro interno ao processar a solicitaÁ„o.");
+                return StatusCode(500, "Ocorreu um erro interno ao processar a solicita√ß√£o.");
             }
         }
 
@@ -373,16 +431,16 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             try
             {
-                // ValidaÁ„o dos par‚metros de entrada
+                // Valida√ß√£o dos par√¢metros de entrada
                 if (string.IsNullOrEmpty(Origin) || string.IsNullOrEmpty(Destination) || string.IsNullOrEmpty(Departure) || string.IsNullOrEmpty(Arrival) || Passengers <= 0)
                 {
-                    return BadRequest("Par‚metros de entrada inv·lidos.");
+                    return BadRequest("Par√¢metros de entrada inv√°lidos.");
                 }
 
                 // Tentar converter as datas
                 if (!DateTime.TryParse(Departure, out DateTime departureDate) || !DateTime.TryParse(Arrival, out DateTime arrivalDate))
                 {
-                    return BadRequest("Formato de data inv·lido.");
+                    return BadRequest("Formato de data inv√°lido.");
                 }
 
                 ViewBag.Origin = Origin;
@@ -391,7 +449,7 @@ namespace BeaverEnterprisesMVC.Controllers
                 ViewBag.Arrival = Arrival;
                 ViewBag.Passengers = Passengers;
 
-                // Converter para DateOnly (apenas a data, sem hor·rio)
+                // Converter para DateOnly (apenas a data, sem hor√°rio)
                 DateOnly departureDateOnly = DateOnly.FromDateTime(departureDate);
                 DateOnly arrivalDateOnly = DateOnly.FromDateTime(arrivalDate); // Data da volta
                 DateOnly today = DateOnly.FromDateTime(DateTime.Now);
@@ -407,10 +465,10 @@ namespace BeaverEnterprisesMVC.Controllers
                     .Include(fs => fs.IdFlightNavigation.IdAircraftNavigation)
                     .Include(fs => fs.IdFlightNavigation.IdClassNavigation)
                     .Where(fs => fs.FlightDate == arrivalDateOnly // Garante que pega apenas a data da volta
-                                && fs.IdFlightNavigation.IdOriginNavigation.Name == Destination // Origem do voo de volta È o destino da ida
-                                && fs.IdFlightNavigation.IdDestinationNavigation.Name == Origin // Destino do voo de volta È a origem da ida
+                                && fs.IdFlightNavigation.IdOriginNavigation.Name == Destination // Origem do voo de volta √© o destino da ida
+                                && fs.IdFlightNavigation.IdDestinationNavigation.Name == Origin // Destino do voo de volta √© a origem da ida
                                 && fs.FlightDate >= today) // Apenas voos futuros
-                    .OrderBy(fs => fs.IdFlightNavigation.DepartureTime) // Ordenar pelo hor·rio de partida
+                    .OrderBy(fs => fs.IdFlightNavigation.DepartureTime) // Ordenar pelo hor√°rio de partida
                     .ToListAsync();
 
                 // Tratar voos sem aeronave
@@ -418,11 +476,11 @@ namespace BeaverEnterprisesMVC.Controllers
                 {
                     if (schedule.IdFlightNavigation.IdAircraftNavigation == null)
                     {
-                        schedule.IdFlightNavigation.IdAircraftNavigation = new Aircraft(); // Ou valor padr„o
+                        schedule.IdFlightNavigation.IdAircraftNavigation = new Aircraft(); // Ou valor padr√£o
                     }
                 }
 
-                // Carregar todas as classes disponÌveis na base de dados
+                // Carregar todas as classes dispon√≠veis na base de dados
                 var allClasses = await _context.Classes.ToListAsync();
 
                 // Passar as classes para a view usando ViewBag
@@ -435,7 +493,7 @@ namespace BeaverEnterprisesMVC.Controllers
             {
                 // Log detalhado para capturar erros
                 Console.Error.WriteLine($"[ERRO] {ex.Message}\nStackTrace: {ex.StackTrace}");
-                return StatusCode(500, "Ocorreu um erro interno ao processar a solicitaÁ„o.");
+                return StatusCode(500, "Ocorreu um erro interno ao processar a solicita√ß√£o.");
             }
         }
 

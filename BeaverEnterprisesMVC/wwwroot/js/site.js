@@ -17,7 +17,7 @@ function changeView(event, view) {
     event.target.classList.add('active');
 
     // Se for uma Partial View, faz uma requisição AJAX
-    if (view === '_MainLayout' || view === '_Login') {
+    if (view === '_MainLayout' || view === '_CheckIn') {
         $.get("/Home/GetPartialView", { viewName: view }, function (data) {
             document.getElementById('shared-view').innerHTML = data;
 

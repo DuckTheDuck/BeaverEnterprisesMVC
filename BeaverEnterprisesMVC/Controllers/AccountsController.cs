@@ -74,8 +74,20 @@ namespace BeaverEnterprisesMVC.Controllers
                 }
 
                 //Codigo de user
-                int CodeFinal = _context.Accounts.Max(u => u.Code) + 1;
+
+                var user = _context.Accounts.FirstOrDefault();
+                int CodeFinal;
+              
+               if (user != null)
+               {
+                CodeFinal = _context.Accounts.Max(u => u.Code) + 1;
                 account.Code = CodeFinal;
+               }
+               else
+               {
+                account.Code = 100000;
+               }
+                
 
                 //Encriptar a password
                 account.Password = HashPassword(account.Password);
