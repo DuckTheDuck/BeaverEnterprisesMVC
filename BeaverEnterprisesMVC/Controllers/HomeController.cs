@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -261,7 +263,7 @@ namespace BeaverEnterprisesMVC.Controllers
             return View();
         }
 
-        public IActionResult Regsister()
+        public IActionResult Register()
         {
             return View();
         }
@@ -285,15 +287,17 @@ namespace BeaverEnterprisesMVC.Controllers
                 return RedirectToAction("Create", "Manufacturers");
             }
 
-            var user = _context.Accounts.FirstOrDefault(u => u.Email == email && u.Password == password);
+            string passHash = HashPassword(password);
+
+            var user = _context.Accounts.FirstOrDefault(u => u.Email == email && u.Password == passHash);
             if (user != null)
             {
                 HttpContext.Session.SetInt32("CurrentUserID", user.Id);
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewBag.Error = "Invalid username or password.";
-            return View();
+            TempData["ErrorMessageLogin"] = "Invalid username or password!";
+            return View("Register", "Home");
         }
 
         [HttpPost]
@@ -435,5 +439,13 @@ namespace BeaverEnterprisesMVC.Controllers
             }
         }
 
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(bytes);
+            }
+        }
     }
 }

@@ -6,12 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeaverEnterprisesMVC.Models;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
     public class AccountsController : Controller
     {
         private readonly BeaverEnterprisesContext _context;
+        private static readonly Regex passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>_]).{8,80}$");
 
         public AccountsController(BeaverEnterprisesContext context)
         {
@@ -57,11 +61,31 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (_context.Accounts.Any(u => u.Email == account.Email))
+                {
+                    TempData["ErrorMessageEmail"] = "This email already has an account!";
+                    return RedirectToAction("Register", "Home");
+                }
+
+                if (!passwordRegex.IsMatch(account.Password))
+                {
+                    TempData["ErrorMessagePassWord"] = "Password doesnt match the requesits!";
+                    return RedirectToAction("Register", "Home");
+                }
+
+                //Codigo de user
+                int CodeFinal = _context.Accounts.Max(u => u.Code) + 1;
+                account.Code = CodeFinal;
+
+                //Encriptar a password
+                account.Password = HashPassword(account.Password);
+
                 _context.Add(account);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Register", "Home");
             }
-            return View(account);
+
+            return RedirectToAction("Register", "Home");
         }
 
         // GET: Accounts/Edit/5
@@ -151,6 +175,15 @@ namespace BeaverEnterprisesMVC.Controllers
         private bool AccountExists(int id)
         {
             return _context.Accounts.Any(e => e.Id == id);
+        }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(bytes);
+            }
         }
     }
 }

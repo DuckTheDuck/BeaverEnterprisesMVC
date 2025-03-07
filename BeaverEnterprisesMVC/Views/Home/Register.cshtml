@@ -12,6 +12,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+    <!-- jQuery (Necessário para Toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 </head>
 <body>
@@ -22,15 +30,15 @@
             <div class="navbarcustom">
                 <a href="#" class="airline">Airline</a>
                 <div class="leftnavbarcustom">
-                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
                     <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
                     <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
-                    <div class="navitem"><a href="#">Contact</a></div>                  
-                </div>              
+                    <div class="navitem"><a href="#">Contact</a></div>
+                </div>
             </div>
         </div>
 
-        
+
         <div class="Login-mid-button">
             <a href="#" class="cta-button active" onclick="changeViewLoginRegister(event, '_Login')">Login</a>
             <a href="#" class="cta-button" onclick="changeViewLoginRegister(event, '_Register')">Register</a>
@@ -38,22 +46,38 @@
 
         <!-- Área onde a view será alterada -->
         <div id="shared-view">
-            
         </div>
-      
+
     </div>
 
     <!-- Signup Form -->
-   
-
     @await Html.PartialAsync("_Footer")
 
+    <script>
+        $(document).ready(function () {
+            var ErrorMessagePass = '@TempData["ErrorMessagePassWord"]';
+            var ErrorMessageEmail = '@TempData["ErrorMessageEmail"]';
+            var ErrorMessageLogin = '@TempData["ErrorMessageLogin"]';
+
+            if (ErrorMessagePass) {
+                toastr.error(ErrorMessagePass, "Erro");
+            }
+
+            if (ErrorMessageEmail) {
+                toastr.error(ErrorMessageEmail, "Erro");
+            }
+
+            if (ErrorMessageLogin) {
+                toastr.error(ErrorMessageLogin, "Erro");
+            }
+        });
+    </script>
 
 
     <!-- JavaScript -->
     <script src="~/js/site.js"></script>
     <style>
-        .herov3{
+        .herov3 {
             background: url('https://source.unsplash.com/1600x900/?airplane,airport') center/cover;
             display: flex;
             align-items: flex-end; /* Alinha o conteúdo da hero ao fundo */

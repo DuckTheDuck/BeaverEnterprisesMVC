@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,34 +12,27 @@
     <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-        <div class="centered-form-Gabriel-Login">
-            <div class="form-Gabriel-Login">
-                <div class="form-content-Gabriel-Login">
-                    <header>Signup</header>
-                   
-                    <form action="#">
-                        <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                            <input type="email" placeholder="Email" class="input-Gabriel-Login">
-                        </div>
-                        <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                            <input type="text" placeholder="Username" class="input-Gabriel-Login">
-                        </div>
-                        <div class="field-Gabriel-Login input-field-Gabriel-Login">
-                            <input type="password" placeholder="Password" class="password-Gabriel-Login">
-                            <i class='bx bx-hide eye-icon-Gabriel-Login'></i>
-                        </div>
-                        <div class="field-Gabriel-Login button-field-Gabriel-Login">
-                            <button>Signup</button>
-                        </div>                   
-                    </form>                   
-                
-                </div>
+    <div class="centered-form-Gabriel-Login">
+        <div class="form-Gabriel-Login">
+            <div class="form-content-Gabriel-Login">
+                <header>Signup</header>
+
+                <form asp-action="Create" asp-controller="Accounts" method="post">
+
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="email" name="email" id="email" placeholder="Email" class="input-Gabriel-Login" required>
+                    </div>
+                    <div class="field-Gabriel-Login input-field-Gabriel-Login">
+                        <input type="password" name="password" id="password" placeholder="Password" class="password-Gabriel-Login" required>
+                        <i class='bx bx-hide eye-icon-Gabriel-Login'></i>
+                    </div>
+                    <div class="field-Gabriel-Login button-field-Gabriel-Login">
+                        <input type="submit" value="Create" class="btn btn-primary w-100">
+                    </div>
+                </form>
             </div>
         </div>
-
-   
-
-
+    </div>
     <!-- JavaScript -->
     <script src="~/js/Design.js"></script>
 </body>
