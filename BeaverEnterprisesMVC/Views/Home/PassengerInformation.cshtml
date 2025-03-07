@@ -1,167 +1,205 @@
-﻿@{
-    ViewData["Title"] = "User Information Page";
+﻿@model List<BeaverEnterprisesMVC.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Passenger Information Page";
 }
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Information | Airline</title>
+    <title>Passenger Information | Airline</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="~/css/style.css">
-</head>
-
-<body>
-
-    <div class="centerBookingHeaad">
-        <div class="herov2">
-            <div class="navbarcustom">
-                <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
-                <div class="leftnavbarcustom">
-                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
-                    <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
-                    <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
-                    <div class="navitem"><a href="#">Contact</a></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-8">
-                <h2>User Information</h2>
-
-                <!-- Formulário de Informações do Usuário -->
-                <div id="user-info-form">
-                    <label for="full-name" class="form-label">Full Name</label>
-                    <input type="text" id="full-name" class="form-control mb-3" placeholder="Enter your full name">
-
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-control mb-3" placeholder="Enter your email">
-
-                    <label for="phone" class="form-label">Phone Number</label>
-                    <input type="tel" id="phone" class="form-control mb-3" placeholder="Enter your phone number">
-
-                    <label for="address" class="form-label">Address</label>
-                    <input type="text" id="address" class="form-control mb-3" placeholder="Enter your address">
-
-                    <label for="city" class="form-label">City</label>
-                    <input type="text" id="city" class="form-control mb-3" placeholder="Enter your city">
-
-                    <label for="country" class="form-label">Country</label>
-                    <input type="text" id="country" class="form-control mb-3" placeholder="Enter your country">
-
-                    <button class="btn-submit" onclick="submitUserInfo()">Submit Information</button>
-                </div>
-
-                <!-- Informação de Usuário Confirmada (esconde antes de preencher) -->
-                <div id="user-info-confirmed" style="display: none;">
-                    <p class="user-info">Name: <span class="highlight" id="confirmed-name"></span></p>
-                    <p class="user-info">Email: <span class="highlight" id="confirmed-email"></span></p>
-                    <p class="user-info">Phone: <span class="highlight" id="confirmed-phone"></span></p>
-                    <p class="user-info">Address: <span class="highlight" id="confirmed-address"></span></p>
-                    <p class="user-info">City: <span class="highlight" id="confirmed-city"></span></p>
-                    <p class="user-info">Country: <span class="highlight" id="confirmed-country"></span></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer class="footer text-center">
-        <p1>&copy; 2025 Airline. All Rights Reserved.</p1>
-    </footer>
-
-    <script>
-        function submitUserInfo() {
-            let fullName = document.getElementById("full-name").value;
-            let email = document.getElementById("email").value;
-            let phone = document.getElementById("phone").value;
-            let address = document.getElementById("address").value;
-            let city = document.getElementById("city").value;
-            let country = document.getElementById("country").value;
-
-            if (fullName.trim() === "" || email.trim() === "" || phone.trim() === "" || address.trim() === "" || city.trim() === "" || country.trim() === "") {
-                alert("Please fill in all fields!");
-                return;
-            }
-
-            // Esconde o formulário e mostra a informação do usuário
-            document.getElementById("user-info-form").style.display = "none";
-            document.getElementById("user-info-confirmed").style.display = "block";
-
-            // Atualiza os dados do usuário
-            document.getElementById("confirmed-name").innerText = fullName;
-            document.getElementById("confirmed-email").innerText = email;
-            document.getElementById("confirmed-phone").innerText = phone;
-            document.getElementById("confirmed-address").innerText = address;
-            document.getElementById("confirmed-city").innerText = city;
-            document.getElementById("confirmed-country").innerText = country;
-        }
-    </script>
-
     <style>
-        .user-info {
-            font-size: 18px;
-            color: #333;
-            margin: 10px 0;
-            padding: 8px;
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
         }
 
-        .highlight {
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        input, .btn-submit {
-            margin: 15px 0;
-            padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 100%;
-        }
-
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            font-size: 18px;
-            margin-bottom: 130px;
-            width: 40%;
-        }
-
-            .btn-submit:hover {
-                background-color: #0056b3;
-            }
-
-        .navbarcustombooking {
-            display: flex;
-            background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            color: rgb(130, 89, 46);
-            width: 100%;
-            max-width: 1250px;
-            position: relative;
-            margin-top: 1%
-        }
-
-        .centerBookingHeaad {
+        .centerBookingHead {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 20vh;
+            height: 15vh;
             width: 100%;
+        }
+
+        .navbarcustom {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: rgb(130, 89, 46);
+            width: 100%;
+            max-width: 1250px;
+            margin: 20px auto;
         }
 
         .airline-do-Simao {
             font-size: 24px;
             font-weight: bold;
             color: rgb(130, 89, 46);
-            align-content: center;
+        }
+
+        .leftnavbarcustom {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navitem a {
+            color: rgb(130, 89, 46);
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .passenger-form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+            .passenger-form-container h2 {
+                color: rgb(130, 89, 46);
+                text-align: center;
+                margin-bottom: 30px;
+                font-size: 2rem;
+            }
+
+        .form-label {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: rgb(130, 89, 46);
+                box-shadow: 0 0 5px rgba(130, 89, 46, 0.3);
+                outline: none;
+            }
+
+        .btn-submit {
+            background-color: rgb(130, 89, 46);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-submit:hover {
+                background-color: rgb(100, 69, 36);
+            }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin-top: 40px;
+            text-align: center;
         }
     </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="centerBookingHead">
+        <div class="navbarcustom">
+            <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
+            <div class="leftnavbarcustom">
+                <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                <div class="navitem"><a href="#">Contact</a></div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Passenger Information Form -->
+    <div class="passenger-form-container">
+        <h2>Passenger Information</h2>
+        <form id="passenger-info-form">
+            <div class="mb-3">
+                <label for="first-name" class="form-label">First Name</label>
+                <input type="text" id="first-name" class="form-control" placeholder="Enter your first name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="last-name" class="form-label">Last Name</label>
+                <input type="text" id="last-name" class="form-control" placeholder="Enter your last name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <select id="gender" class="form-select" required>
+                    <option value="" disabled selected>Select your gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn-submit" onclick="submitPassengerInfo()">Submit Information</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 Airline. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function submitPassengerInfo() {
+            let firstName = document.getElementById("first-name").value;
+            let lastName = document.getElementById("last-name").value;
+            let gender = document.getElementById("gender").value;
+
+            // Validação
+            if (firstName.trim() === "" || lastName.trim() === "" || gender === "") {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            // Enviar dados para o servidor
+            fetch('/Home/SubmitPassengerInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Name: firstName,
+                    Surname: lastName,
+                    Gender: gender
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to cart (handled by server now)
+                    window.location.href = '@Url.Action("Cart", "Home")';
+                } else {
+                    alert("Error saving passenger information: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while submitting the information.");
+            });
+        }
+    </script>
 </body>
 </html>

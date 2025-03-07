@@ -1,349 +1,291 @@
-﻿<!DOCTYPE html>
+﻿@model List<BeaverEnterprisesMVC.Models.Ticket>
+
+@functions {
+    public string GetDuration(string departureTime, string arrivalTime)
+    {
+        try
+        {
+            if (TimeSpan.TryParse(departureTime, out TimeSpan departure) &&
+                TimeSpan.TryParse(arrivalTime, out TimeSpan arrival))
+            {
+                TimeSpan duration = arrival - departure;
+                if (duration.TotalHours < 0)
+                {
+                    duration = TimeSpan.FromHours(24) + duration;
+                }
+                return duration.TotalHours.ToString("F1");
+            }
+            return "N/A";
+        }
+        catch (Exception)
+        {
+            return "N/A";
+        }
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight Availability</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Arquivo CSS externo -->
+    <title>Cart - Your Tickets</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-
-    <div class="centerBookingHeaad">
-        <div class="herov2">
-            <div class="navbarcustom">
-                <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
-                <div class="leftnavbarcustom">
-                    <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
-                    <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
-                    <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
-                    <div class="navitem"><a href="#">Contact</a></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h4>Flights:</h4>
-    <ul id="flight-list"></ul>
-
-    <h4 id="total-price-display" style="text-align: right; margin-right: 305px;">
-        Total Price: EUR <span id="total-price">0.00</span>
-    </h4>
-
-    <div class="container mt-4">
-        <div class="passenger-info-card">
-            <h2>Passenger Information</h2>
-            <div class="passenger-header" onclick="togglePassengerDetails(this)">
-                <i class="fas fa-user"></i>
-                <div class="passenger-header-info">
-                    <h4>Malandro Antonio</h4>
-                    <p>Adult</p>
-                </div>
-                <div class="passenger-header-contact">
-                    <p>simaomartins14@gmail.com</p>
-                    <p>+351 969578605</p>
-                </div>
-            </div>
-            <div class="passenger-details">
-                <h6>Personal Information</h6>
-                <div class="detail-item">
-                    <span class="detail-label">Date of Birth: </span>
-                    <span class="detail-value">18/06/1999</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Gender: </span>
-                    <span class="detail-value">Male</span>
-                </div>
-                <h6>Contact Information</h6>
-                <div class="detail-item">
-                    <span class="detail-label">Email: </span>
-                    <span class="detail-value">simaomartins14@gmail.com</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Phone: </span>
-                    <span class="detail-value">+351 969578605</span>
-                </div>
-            </div>
-            <div class="passenger-footer">
-                <button class="btn-modify">Modify</button>
-            </div>
-        </div>
-    </div>
-    <div class="container text-end mt-4">
-        <h3>Total price:EUR 805.01</h3>
-        <p>Round trip price for all passengers (incl. taxes, fees and surcharges)</p>
-        <button class="btn-primary-booking-search" href="@Url.Action("PassengerInformation","Home")" onclick="confirmSelection()">Enter Passenger Information</button>
-    </div>
-    <div class="container mt-4">
-        <p>Fares are not guaranteed until you confirm your purchase by clicking the “Yes, book and pay for ticket” button.**</p>
-        <p>The fare is only valid if all the flights are fully flown in the booked sequence. Otherwise the fare will be recalculated based on the actual flight routing.</p>
-        <p>In case this flight is operated by an airline other than Lufthansa, baggage allowance, priority check in, seating terms, Fastlane option may differ.</p>
-        <p class="mb-5">
-            <!-- Adiciona espaçamento -->
-            Please note that options (e.g.: extra baggage, seat reservation) are not refundable in case you cancel your flight or if you change your flight and the option is no longer available.
-        </p>
-    </div>
-    <footer class="footer text-center">
-        <p>&copy; 2025 Airline. All Rights Reserved.</p>
-    </footer>
-
     <style>
-        .navbarcustombooking {
+        .navbarcustom {
             display: flex;
-            background: rgba(255, 255, 255, 0.7); /* Cor com opacidade */
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             color: rgb(130, 89, 46);
             width: 100%;
             max-width: 1250px;
-            position: relative;
-            margin-top: 1%
+            margin: 20px auto;
         }
 
-        .centerBookingHeaad {
+        .centerBookingHead {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 20vh;
+            height: 15vh;
             width: 100%;
-        }
-
-        .btn-primary-booking-search {
-            background-color: rgb(130, 89, 46);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
         }
 
         .airline-do-Simao {
             font-size: 24px;
             font-weight: bold;
             color: rgb(130, 89, 46);
-            align-content: center;
         }
 
-        .passenger-info-card {
+        .leftnavbarcustom {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navitem a {
+            color: rgb(130, 89, 46);
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .ticket-card {
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin-bottom: 20px;
-            margin-top: 80px;
         }
 
-        .passenger-header {
+        .ticket-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            cursor: pointer;
+            align-items: center;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
-            margin-bottom: 10px;
         }
 
-            .passenger-header i {
-                margin-right: 10px;
-                font-size: 1.5rem;
-                color: rgb(130, 89, 46);
-            }
-
-        .passenger-header-info {
-            flex: 1;
-        }
-
-            .passenger-header-info h4 {
-                margin: 0;
-                font-size: 1.5rem;
-            }
-
-            .passenger-header-info p {
-                margin: 0;
-                color: #666;
-            }
-
-        .passenger-header-contact {
-            text-align: right;
-            flex: 1;
-        }
-
-            .passenger-header-contact p {
-                margin: 0;
-                color: #666;
-                font-size: 0.9rem;
-            }
-
-        .passenger-details {
-            margin-bottom: 10px; /* Inicialmente oculto */
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: left;
-            margin-bottom: 5px;
-        }
-
-        .detail-label {
+        .ticket-time {
+            font-size: 1.2rem;
             font-weight: bold;
+        }
+
+        .text-muted {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .ticket-duration {
+            font-size: 1rem;
             color: #333;
         }
 
-        .detail-value {
-            color: #666;
-            margin-left: 5px;
+        .ticket-airline {
+            font-size: 1rem;
+            color: rgb(130, 89, 46);
         }
 
-        .passenger-footer {
-            text-align: right;
+        .price-box {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid rgb(130, 89, 46);
+            border-radius: 5px;
         }
 
-        .btn-modify {
+        .btn-primary-booking {
             background-color: rgb(130, 89, 46);
             color: white;
             border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+        }
+
+        .btn-danger-booking {
+            background-color: #dc3545;
+            color: white;
+            border: none;
             padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgb(130, 89, 46);
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin-top: 40px;
         }
     </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="centerBookingHead">
+        <div class="navbarcustom">
+            <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
+            <div class="leftnavbarcustom">
+                <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
+                <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                <div class="navitem"><a href="#">Contact</a></div>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        function togglePassengerDetails(header) {
-            const details = header.parentElement.querySelector('.passenger-details');
-            const contactInfo = header.querySelector('.passenger-header-contact');
-            if (details.style.display === 'none') {
-                details.style.display = 'none';
-                contactInfo.style.display = 'none';
-            } else {
-                details.style.display = 'none';
-                contactInfo.style.display = 'block';
-            }
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <h2>Your Cart</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info" role="alert">
+                Your cart is empty. <a href="@Url.Action("BookingAvailability", "Home")" class="alert-link">Book a flight now!</a>
+            </div>
         }
+        else
+        {
+            decimal totalPrice = 0;
+            var groupedTickets = Model.GroupBy(t => t.IdPassager).ToList();
 
-        function confirmSelection() {
-            // Mostra as informações do passageiro
-            document.querySelector('.passenger-info-card').style.display = 'block';
+            @foreach (var group in groupedTickets)
+            {
+                <div class="passenger-group">
+                    <h4>Passenger Group (Temp ID: @group.Key)</h4>
 
-            // Mostra o total antes das informações do passageiro
-            document.getElementById('total-price-display').style.display = 'block';
+                    @foreach (var ticket in group)
+                    {
+                        var flightSchedule = ticket?.IdFlightScheduleNavigation;
+                        var flight = flightSchedule?.IdFlightNavigation;
 
-            // Muda o texto do botão para "Confirm Payout"
-            let button = document.querySelector('.btn-primary-booking-search');
-            button.textContent = "Confirm Payout";
+                        totalPrice += ((decimal?)ticket.Price) ?? 0;
 
-            // Redireciona para a página "PassengerInformation"
-            window.location.href = '@Url.Action("PassengerInformation", "Home")';
-        }
-
-        function calculateDuration(departureTime, arrivalTime) {
-            const [depHours, depMinutes] = departureTime.split(':').map(Number);
-            const [arrHours, arrMinutes] = arrivalTime.split(':').map(Number);
-
-            let depTotal = depHours * 60 + depMinutes;
-            let arrTotal = arrHours * 60 + arrMinutes;
-
-            if (arrTotal < depTotal) {
-                arrTotal += 24 * 60;
-            }
-
-            const durationMinutes = arrTotal - depTotal;
-            const hours = Math.floor(durationMinutes / 60);
-            const minutes = durationMinutes % 60;
-
-            return `${hours}h ${minutes}m`;
-        }
-
-            function loadFlightsFromCart() {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            console.log("Carregando cart do localStorage:", cart);
-            let flightList = document.getElementById("flight-list");
-            let totalPrice = 0;
-
-            flightList.innerHTML = "";
-
-            if (cart.length === 0) {
-                console.log("Nenhum item no cart.");
-                flightList.innerHTML = "<li>Nenhum voo selecionado.</li>";
-                return;
-            }
-
-            cart.forEach(item => {
-                console.log("Processando item:", item);
-                totalPrice += item.price || 0;
-
-                let duration = calculateDuration(item.departureTime, item.arrivalTime);
-
-                let flightCard = `
-                    <li>
-                        <div class="flight-card">
-                            <div class="flight-header">
-                                <div>
-                                    <div class="flight-time">${item.departureTime || "N/A"}</div>
-                                    <div class="text-muted">${item.origin || "N/A"} - Terminal 1</div>
-                                </div>
-                                <div>
-                                    <div class="flight-duration">Duration</div>
-                                    <div class="text-muted">${duration}</div>
-                                </div>
-                                <div>
-                                    <div class="flight-time">${item.arrivalTime || "N/A"}</div>
-                                    <div class="text-muted">${item.destination || "N/A"} - Terminal 1</div>
-                                </div>
-                                <div class="flight-airline">
-                                    ✈ Operated by ${item.aircraft || "N/A"}
-                                </div>
-                                <div class="d-flex">
-                                    <div class="price-box economy">
-                                        <p>${item.className || "N/A"}</p>
-                                        <h4>€${(item.price || 0).toFixed(2)}</h4>
+                        @if (flight != null && flight.IdOriginNavigation != null && flight.IdDestinationNavigation != null)
+                        {
+                            <div class="ticket-card">
+                                <!-- Flight Information -->
+                                <div class="ticket-header">
+                                    <div>
+                                        <div class="ticket-time">Departure: @flight.DepartureTime</div>
+                                        <div class="text-muted">@flight.IdOriginNavigation.Name - Terminal 1</div>
+                                    </div>
+                                    <div>
+                                        <div class="ticket-duration">Direct</div>
+                                        <div class="text-muted">
+                                            Duration: @(
+                                      !string.IsNullOrEmpty(flight.ArrivalTime) && !string.IsNullOrEmpty(flight.DepartureTime)
+                                      ? GetDuration(flight.DepartureTime, flight.ArrivalTime)
+                                      : "N/A"
+                                      )h
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="ticket-time">Arrival: @flight.ArrivalTime</div>
+                                        <div class="text-muted">@flight.IdDestinationNavigation.Name - Terminal 1</div>
+                                    </div>
+                                    <div class="ticket-airline">
+                                        ✈ Operated by TAP Air Portugal
+                                    </div>
+                                    <div class="price-box">
+                                        <p>Class: @flight.IdClassNavigation?.Name</p>
+                                        <h4>€@(ticket.Price ?? 0)</h4>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </li>
-                `;
-                flightList.innerHTML += flightCard;
-            });
 
-            document.getElementById("total-price").textContent = totalPrice.toFixed(2);
-            console.log("HTML gerado para flightList:", flightList.innerHTML);
+                                <!-- Ticket Information -->
+                                <div class="mt-3">
+                                    <h6>Ticket ID: @ticket.Id (Temporary)</h6>
+                                    <p>Seat Number: @ticket.SeatNumber</p>
+                                    <p>Status: @ticket.Status</p>
+                                    <p>Type: @(ticket.IdFlightScheduleNavigation?.IdFlightNavigation?.IdOriginNavigation.Name == flight.IdOriginNavigation.Name ? "Departure" : "Arrival")</p>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning" role="alert">
+                                Ticket is missing flight information.
+                            </div>
+                        }
+                    }
+
+                    <!-- Button to Add Passenger Information -->
+                    <div class="mt-3 text-end">
+                        <button class="btn-passenger-info" onclick="addPassengerInfo(@group.Key)">Add Passenger Info</button>
+                    </div>
+                </div>
+            }
+
+            <!-- Total Price and Proceed -->
+            <div class="text-end mt-4">
+                <h3 class="total-price">Total Price: €@totalPrice</h3>
+                <p>Includes taxes, fees, and surcharges</p>
+                <a href="@Url.Action("PassengerInformation", "Home")" class="btn-primary-booking">Proceed to Checkout</a>
+            </div>
+        }
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <p>© 2025 Airline. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function addPassengerInfo(passengerId) {
+            if (confirm("Do you want to add passenger information for this group?")) {
+                // Redirect to PassengerInformation with the temporary passenger ID
+                window.location.href = `@Url.Action("PassengerInformation", "Home")?passengerId=${passengerId}`;
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            console.log("Carregando cart do localStorage no DOMContentLoaded:", cart);
-
-            if (cart.length > 0) {
-                // Filtra apenas os campos necessários para enviar ao backend
-                let simplifiedCart = cart.map(item => ({
-                    idFlightSchedule: item.idFlightSchedule,
-                    price: item.price
-                }));
-
-                fetch('@Url.Action("Cart", "Home")', {
+        function removeTicket(index) {
+            if (confirm("Are you sure you want to remove this ticket from your cart?")) {
+                fetch('/Home/RemoveTicketFromCart', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(simplifiedCart)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ index: index })
                 })
-                .then(response => {
-                    if (response.ok) {
-                        console.log("Cart enviado para o backend com sucesso!");
-                        loadFlightsFromCart(); // Carrega os voos na interface
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Ticket removed from cart.");
+                        window.location.reload();
                     } else {
-                        console.error("Erro ao enviar cart para o backend.");
+                        alert("Error removing ticket: " + data.message);
                     }
                 })
-                .catch(error => console.error("Erro na requisição:", error));
-            } else {
-                console.log("Cart vazio, nada enviado ao backend.");
-                loadFlightsFromCart();
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while removing the ticket.");
+                });
             }
-        });
+        }
     </script>
 </body>
 </html>

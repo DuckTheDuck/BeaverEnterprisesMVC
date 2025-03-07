@@ -4,6 +4,7 @@ using BeaverEnterprisesMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using Newtonsoft.Json;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -40,6 +41,81 @@ namespace BeaverEnterprisesMVC.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Cart()
+        {
+            try
+            {
+                // Retrieve tickets and passenger count from session
+                var passengerCount = HttpContext.Session.GetInt32("PassengersCount") ?? 0;
+                var ticketsJson = HttpContext.Session.GetString("CartTickets");
+                var tickets = string.IsNullOrEmpty(ticketsJson)
+                    ? new List<Ticket>()
+                    : JsonConvert.DeserializeObject<List<Ticket>>(ticketsJson);
+
+                if (!tickets.Any() || passengerCount == 0)
+                {
+                    return View(new List<Ticket>());
+                }
+
+                // Populate flight schedule navigation properties
+                foreach (var ticket in tickets)
+                {
+                    if (ticket.IdFlightSchedule != 0)
+                    {
+                        ticket.IdFlightScheduleNavigation = _context.Flightschedules
+                            .Include(fs => fs.IdFlightNavigation)
+                            .ThenInclude(f => f.IdOriginNavigation)
+                            .Include(fs => fs.IdFlightNavigation.IdDestinationNavigation)
+                            .Include(fs => fs.IdFlightNavigation.IdAircraftNavigation)
+                            .Include(fs => fs.IdFlightNavigation.IdClassNavigation)
+                            .FirstOrDefault(fs => fs.Id == ticket.IdFlightSchedule);
+                    }
+                }
+
+                // Calculate the number of tickets per passenger (assuming equal ida and volta)
+                int ticketsPerPassenger = tickets.Count() / passengerCount;
+                if (ticketsPerPassenger % 2 != 0)
+                {
+                    throw new Exception("Number of tickets must be even for pairing departure and arrival.");
+                }
+
+                // Group tickets by passenger
+                List<List<Ticket>> passengerTickets = new List<List<Ticket>>();
+                for (int i = 0; i < passengerCount; i++)
+                {
+                    int startIndex = i * ticketsPerPassenger;
+                    int endIndex = startIndex + ticketsPerPassenger;
+                    var passengerGroup = tickets.GetRange(startIndex, ticketsPerPassenger);
+                    passengerTickets.Add(passengerGroup);
+                }
+
+                // Assign temporary IdPassager to each group
+                for (int i = 0; i < passengerCount; i++)
+                {
+                    foreach (var ticket in passengerTickets[i])
+                    {
+                        ticket.IdPassager = -(i + 1); // Temporary negative ID (e.g., -1, -2, ...)
+                    }
+                }
+
+                // Rebuild the tickets list
+                tickets.Clear();
+                foreach (var group in passengerTickets)
+                {
+                    tickets.AddRange(group);
+                }
+
+                return View(tickets);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao recuperar os tickets para o carrinho.");
+                return StatusCode(500, "Ocorreu um erro ao carregar o carrinho.");
+            }
+        }
+
+        // Ação POST para processar os tickets adicionados ao carrinho
         [HttpPost]
         public IActionResult Cart([FromBody] List<Ticket> tickets)
         {
@@ -50,14 +126,33 @@ namespace BeaverEnterprisesMVC.Controllers
                     return Json(new { success = false, message = "Lista de tickets vazia." });
                 }
 
-                // Aqui você pode trabalhar com a List<Ticket> diretamente
+                // Validate the tickets
                 foreach (var ticket in tickets)
                 {
-                    Console.WriteLine($"Ticket: IdFlightSchedule={ticket.IdFlightSchedule}, Price={ticket.Price}, Status={ticket.Status}");
-                    // Não salva no banco, apenas processa a lista recebida
+                    // Ensure the ticket has a valid flight schedule
+                    if (ticket.IdFlightSchedule == 0)
+                    {
+                        return Json(new { success = false, message = "Ticket inválido: ID de voo ausente." });
+                    }
+
+                    // Passenger ID should be 0 at this stage (not yet assigned)
+                    ticket.IdPassager = 0; // Explicitly set to 0 since passenger info isn’t provided yet
+                    ticket.Status = "Por validar"; // Set default status
                 }
 
-                return Json(new { success = true, tickets = tickets });
+                // Retrieve existing tickets from session (if any)
+                var existingTicketsJson = HttpContext.Session.GetString("CartTickets");
+                var existingTickets = string.IsNullOrEmpty(existingTicketsJson)
+                    ? new List<Ticket>()
+                    : JsonConvert.DeserializeObject<List<Ticket>>(existingTicketsJson);
+
+                // Add new tickets to the existing list
+                existingTickets.AddRange(tickets);
+
+                // Save the updated list back to session
+                HttpContext.Session.SetString("CartTickets", JsonConvert.SerializeObject(existingTickets));
+
+                return Json(new { success = true, message = "Tickets adicionados ao carrinho com sucesso." });
             }
             catch (Exception ex)
             {
@@ -66,20 +161,96 @@ namespace BeaverEnterprisesMVC.Controllers
             }
         }
 
-        // Ação GET para exibir a página do carrinho
-        [HttpGet]
-        public IActionResult Cart()
+        // Ação POST para remover um ticket do carrinho (session)
+        [HttpPost]
+        public IActionResult RemoveTicketFromCart([FromBody] RemoveTicketRequest request)
         {
-            // Recupera os tickets do banco de dados (opcional, dependendo do que você quer mostrar)
-            var tickets = _context.Tickets
-                .Where(t => t.Status == "Por validar") // Filtra tickets pendentes, se desejar
-                .ToList();
+            try
+            {
+                // Retrieve existing tickets from session
+                var ticketsJson = HttpContext.Session.GetString("CartTickets");
+                if (string.IsNullOrEmpty(ticketsJson))
+                {
+                    return Json(new { success = false, message = "Carrinho vazio." });
+                }
 
-            // Retorna a view Cart.cshtml, passando os tickets como modelo (se necessário)
-            return View(tickets);
+                var tickets = JsonConvert.DeserializeObject<List<Ticket>>(ticketsJson);
+
+                // Validate the index
+                if (request.Index < 0 || request.Index >= tickets.Count)
+                {
+                    return Json(new { success = false, message = "Índice inválido." });
+                }
+
+                // Remove the ticket at the specified index
+                tickets.RemoveAt(request.Index);
+
+                // Update the session
+                HttpContext.Session.SetString("CartTickets", JsonConvert.SerializeObject(tickets));
+
+                return Json(new { success = true, message = "Ticket removido com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao remover ticket do carrinho.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public IActionResult SubmitPassengerInfo([FromBody] Passenger passenger)
+        {
+            try
+            {
+                // Validate input
+                if (string.IsNullOrEmpty(passenger.Name) ||
+                    string.IsNullOrEmpty(passenger.Surname) ||
+                    string.IsNullOrEmpty(passenger.Gender))
+                {
+                    return Json(new { success = false, message = "All fields are required." });
+                }
+
+                // Set SeatNumber to null since it’s not provided yet
+                passenger.SeatNumber = null;
+
+                // Save the passenger to the database
+                _context.Passengers.Add(passenger);
+                _context.SaveChanges();
+
+                // Retrieve tickets from session
+                var ticketsJson = HttpContext.Session.GetString("CartTickets");
+                var tickets = string.IsNullOrEmpty(ticketsJson)
+                    ? new List<Ticket>()
+                    : JsonConvert.DeserializeObject<List<Ticket>>(ticketsJson);
+
+                if (!tickets.Any())
+                {
+                    return Json(new { success = false, message = "No tickets found in cart." });
+                }
+
+                // Update all tickets in the session with the passenger ID
+                foreach (var ticket in tickets)
+                {
+                    ticket.IdPassager = passenger.Id;
+                }
+
+                // Save the updated tickets back to session
+                HttpContext.Session.SetString("CartTickets", JsonConvert.SerializeObject(tickets));
+
+                // Redirect back to the cart page
+                return RedirectToAction("Cart", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving passenger information.");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
-
+        // Helper class for the request body
+        public class RemoveTicketRequest
+        {
+            public int Index { get; set; }
+        }
 
         public IActionResult PassengerInformation()
         {
@@ -144,6 +315,8 @@ namespace BeaverEnterprisesMVC.Controllers
                 {
                     return BadRequest("Formato de data inválido.");
                 }
+
+                HttpContext.Session.SetInt32("PassengersCount", Passengers);
 
                 ViewBag.Origin = Origin;
                 ViewBag.Destination = Destination;
