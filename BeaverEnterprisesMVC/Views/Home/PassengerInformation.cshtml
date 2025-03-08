@@ -121,7 +121,7 @@
         <div class="navbarcustom">
             <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
             <div class="leftnavbarcustom">
-                <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
                 <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
                 <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
                 <div class="navitem"><a href="#">Contact</a></div>
@@ -133,16 +133,15 @@
     <div class="passenger-form-container">
         <h2>Passenger Information</h2>
         <form id="passenger-info-form">
+            <input type="hidden" id="passengerId" name="passengerId" value="@ViewBag.PassengerId" />
             <div class="mb-3">
                 <label for="first-name" class="form-label">First Name</label>
                 <input type="text" id="first-name" class="form-control" placeholder="Enter your first name" required>
             </div>
-
             <div class="mb-3">
                 <label for="last-name" class="form-label">Last Name</label>
                 <input type="text" id="last-name" class="form-control" placeholder="Enter your last name" required>
             </div>
-
             <div class="mb-3">
                 <label for="gender" class="form-label">Gender</label>
                 <select id="gender" class="form-select" required>
@@ -152,7 +151,6 @@
                     <option value="Other">Other</option>
                 </select>
             </div>
-
             <button type="button" class="btn-submit" onclick="submitPassengerInfo()">Submit Information</button>
         </form>
     </div>
@@ -163,19 +161,18 @@
     </footer>
 
     <script>
-        function submitPassengerInfo() {
+                        function submitPassengerInfo() {
             let firstName = document.getElementById("first-name").value;
             let lastName = document.getElementById("last-name").value;
             let gender = document.getElementById("gender").value;
+            let passengerId = document.getElementById("passengerId").value;
 
-            // Validação
             if (firstName.trim() === "" || lastName.trim() === "" || gender === "") {
                 alert("Please fill in all fields!");
                 return;
             }
 
-            // Enviar dados para o servidor
-            fetch('/Home/SubmitPassengerInfo', {
+            fetch(`/Home/SubmitPassengerInfo?id=${passengerId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -186,18 +183,23 @@
                     Gender: gender
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    // Redirect to cart (handled by server now)
-                    window.location.href = '@Url.Action("Cart", "Home")';
+                    // Redireciona usando a URL retornada pelo backend
+                    window.location.href = data.redirectUrl;
                 } else {
                     alert("Error saving passenger information: " + data.message);
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred while submitting the information.");
+                console.error("Detailed Error:", error);
+                alert("An error occurred while submitting the information: " + error.message);
             });
         }
     </script>
