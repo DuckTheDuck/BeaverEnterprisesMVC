@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Newtonsoft.Json;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace BeaverEnterprisesMVC.Controllers
 {
@@ -15,7 +13,7 @@ namespace BeaverEnterprisesMVC.Controllers
         private readonly ILogger<HomeController> _logger;
 
         private readonly BeaverEnterprisesContext _context;
-    
+
         public HomeController(ILogger<HomeController> logger, BeaverEnterprisesContext context)
         {
             _logger = logger;
@@ -26,64 +24,6 @@ namespace BeaverEnterprisesMVC.Controllers
         {
 
             return View();
-        }
-
-        // POST: Processar o formulário de check-in
-        [HttpPost]
-        public async Task<IActionResult> Index(string TicketCode, string PassengerCode)
-        {
-            // Converter os valores para inteiros
-            if (!int.TryParse(TicketCode, out int ticketId) || !int.TryParse(PassengerCode, out int passengerId))
-            {
-                TempData["ErrorMessage"] = "Os códigos de ticket e passageiro devem ser números válidos.";
-                return RedirectToAction("Index");
-            }
-
-            var currentUserId = HttpContext.Session.GetInt32("CurrentUserID");
-            if (currentUserId == null)
-            {
-                return RedirectToAction("Register", "Home");
-            }
-
-            // 1. Verificar se a conta existe
-            var account = await _context.Accounts
-                .FirstOrDefaultAsync(a => a.Id == currentUserId);
-
-            if (account == null)
-            {
-                TempData["ErrorMessageAccount"] = "Conta não encontrada.";
-                return RedirectToAction("Index");
-            }
-
-            // 2. Verificar se o TicketId e o PassengerId estão associados à conta
-            // Consulta explícita usando Joins para seguir a cadeia Account → Order → OrderBuy → Ticket → Passenger
-            var ticket = await (from t in _context.Tickets
-                                join ob in _context.Orderbuys on t.Id equals ob.IdTicket
-                                join o in _context.Orders on ob.IdOrder equals o.Id
-                                join a in _context.Accounts on o.IdAccount equals a.Id
-                                where a.Id == currentUserId && t.Id == ticketId && t.IdPassager == passengerId
-                                select t)
-                              .FirstOrDefaultAsync();
-
-            if (ticket == null)
-            {
-                TempData["ErrorMessageTicket"] = "Ticket não encontrado ou não associado ao passageiro informado para esta conta.";
-                return RedirectToAction("Index");
-            }
-
-            // 3. Realizar o check-in
-            if (ticket.Status == "Validado")
-            {
-                TempData["ErrorMessage"] = "O ticket já foi validado anteriormente.";
-                return RedirectToAction("Index");
-            }
-
-            ticket.Status = "Validado";
-            _context.Tickets.Update(ticket);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Check-in realizado com sucesso!";
-            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
@@ -107,6 +47,7 @@ namespace BeaverEnterprisesMVC.Controllers
             try
             {
                 // Retrieve tickets and passenger count from session
+                var p = HttpContext.Session.GetInt32("PassengersCount");
                 var passengerCount = HttpContext.Session.GetInt32("PassengersCount") ?? 0;
                 var ticketsJson = HttpContext.Session.GetString("CartTickets");
                 var tickets = string.IsNullOrEmpty(ticketsJson)
@@ -133,38 +74,28 @@ namespace BeaverEnterprisesMVC.Controllers
                     }
                 }
 
-                // Calculate the number of tickets per passenger (assuming equal ida and volta)
-                int ticketsPerPassenger = tickets.Count() / passengerCount;
-                if (ticketsPerPassenger % 2 != 0)
-                {
-                    throw new Exception("Number of tickets must be even for pairing departure and arrival.");
-                }
+                int ticketsLength = tickets.Count();
 
-                // Group tickets by passenger
-                List<List<Ticket>> passengerTickets = new List<List<Ticket>>();
-                for (int i = 0; i < passengerCount; i++)
+                // Verifica se algum IdPassager é igual a 0
+                if (tickets.Any(t => t.IdPassager == 0))
                 {
-                    int startIndex = i * ticketsPerPassenger;
-                    int endIndex = startIndex + ticketsPerPassenger;
-                    var passengerGroup = tickets.GetRange(startIndex, ticketsPerPassenger);
-                    passengerTickets.Add(passengerGroup);
-                }
+                    List<Ticket> departure = tickets.Take(ticketsLength / 2).ToList(); // Primeira metade para ida
+                    List<Ticket> arrival = tickets.Skip(ticketsLength / 2).Take(ticketsLength - (ticketsLength / 2)).ToList(); // Segunda metade para volta
 
-                // Assign temporary IdPassager to each group
-                for (int i = 0; i < passengerCount; i++)
-                {
-                    foreach (var ticket in passengerTickets[i])
+                    tickets.Clear();
+                    for (int i = 0; i < p; i++)
                     {
-                        ticket.IdPassager = -(i + 1); // Temporary negative ID (e.g., -1, -2, ...)
+                        departure[i].IdPassager = -(i+1);
+                        arrival[i].IdPassager = -(i + 1);
+                        tickets.Add(departure[i]);
+                        tickets.Add(arrival[i]);
                     }
                 }
 
-                // Rebuild the tickets list
-                tickets.Clear();
-                foreach (var group in passengerTickets)
+                HttpContext.Session.SetString("CartTickets", JsonConvert.SerializeObject(tickets, new JsonSerializerSettings
                 {
-                    tickets.AddRange(group);
-                }
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }));
 
                 return View(tickets);
             }
@@ -257,11 +188,12 @@ namespace BeaverEnterprisesMVC.Controllers
             }
         }
         [HttpPost]
-        public IActionResult SubmitPassengerInfo([FromBody] Passenger passenger)
+        public IActionResult SubmitPassengerInfo([FromBody] Passenger passenger, [FromQuery] int id)
         {
             try
             {
                 // Validate input
+
                 if (string.IsNullOrEmpty(passenger.Name) ||
                     string.IsNullOrEmpty(passenger.Surname) ||
                     string.IsNullOrEmpty(passenger.Gender))
@@ -290,14 +222,14 @@ namespace BeaverEnterprisesMVC.Controllers
                 // Update all tickets in the session with the passenger ID
                 foreach (var ticket in tickets)
                 {
-                    ticket.IdPassager = passenger.Id;
+                    if (ticket.IdPassager == id) { ticket.IdPassager = passenger.Id; }
                 }
 
                 // Save the updated tickets back to session
                 HttpContext.Session.SetString("CartTickets", JsonConvert.SerializeObject(tickets));
 
                 // Redirect back to the cart page
-                return RedirectToAction("Cart", "Home");
+                return Json(new { success = true, redirectUrl = Url.Action("Cart", "Home") });
             }
             catch (Exception ex)
             {
@@ -312,8 +244,10 @@ namespace BeaverEnterprisesMVC.Controllers
             public int Index { get; set; }
         }
 
-        public IActionResult PassengerInformation()
+        public IActionResult PassengerInformation(int passengerid)
         {
+            ViewBag.PassengerId = passengerid;
+
             return View();
         }
         public IActionResult CheckIn()
@@ -321,7 +255,7 @@ namespace BeaverEnterprisesMVC.Controllers
             return View();
         }
 
-        public IActionResult Register()
+        public IActionResult Regsister()
         {
             return View();
         }
@@ -336,7 +270,7 @@ namespace BeaverEnterprisesMVC.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-       
+
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
@@ -345,17 +279,15 @@ namespace BeaverEnterprisesMVC.Controllers
                 return RedirectToAction("Create", "Manufacturers");
             }
 
-            string passHash = HashPassword(password);
-
-            var user = _context.Accounts.FirstOrDefault(u => u.Email == email && u.Password == passHash);
+            var user = _context.Accounts.FirstOrDefault(u => u.Email == email && u.Password == password);
             if (user != null)
             {
                 HttpContext.Session.SetInt32("CurrentUserID", user.Id);
                 return RedirectToAction("Index", "Home");
             }
 
-            TempData["ErrorMessageLogin"] = "Invalid username or password!";
-            return View("Register", "Home");
+            ViewBag.Error = "Invalid username or password.";
+            return View();
         }
 
         [HttpPost]
@@ -497,13 +429,5 @@ namespace BeaverEnterprisesMVC.Controllers
             }
         }
 
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
-            }
-        }
     }
 }
