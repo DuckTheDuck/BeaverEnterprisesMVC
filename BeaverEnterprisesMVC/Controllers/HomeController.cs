@@ -351,6 +351,7 @@ namespace BeaverEnterprisesMVC.Controllers
             if (user != null)
             {
                 HttpContext.Session.SetInt32("CurrentUserID", user.Id);
+                TempData["Logged"] = "Logged as: " + email;
                 return RedirectToAction("Index", "Home");
             }
 
