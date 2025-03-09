@@ -133,9 +133,6 @@
             console.log("ID FlightSchedule recebido (volta):", idFlightSchedule);
             element.parentElement.querySelectorAll('.price-box').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
-
-            // Apenas marca o voo como selecionado; os dados serão processados no confirmSelection
-            alert("Voo de volta selecionado! Clique em 'Select' para confirmar.");
         }
 
         function confirmSelection() {
@@ -190,15 +187,15 @@
                 },
                 body: JSON.stringify(tickets)
             })
-            .then(response => {
-                if (response.ok) {
-                    console.log("Tickets enviados com sucesso!");
-                    window.location.href = '@Url.Action("Cart", "Home")';
-                } else {
-                    console.error("Erro ao enviar tickets.");
-                }
-            })
-            .catch(error => console.error("Erro na requisição:", error));
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Tickets enviados com sucesso!");
+                        window.location.href = '@Url.Action("Cart", "Home")';
+                    } else {
+                        console.error("Erro ao enviar tickets.");
+                    }
+                })
+                .catch(error => console.error("Erro na requisição:", error));
         }
 
         function toggleModify() {
