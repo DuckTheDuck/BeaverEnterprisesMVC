@@ -86,7 +86,11 @@ namespace BeaverEnterprisesMVC.Controllers
                     for (int i = 0; i < p; i++)
                     {
                         departure[i].IdPassager = -(i+1);
+                        departure[i].Type = "One-way";
+                        departure[i].Id = i + 1;
                         arrival[i].IdPassager = -(i + 1);
+                        arrival[i].Type = "return";
+                        arrival[i].Id = p.Value + i + 1;
                         tickets.Add(departure[i]);
                         tickets.Add(arrival[i]);
                     }
@@ -96,6 +100,20 @@ namespace BeaverEnterprisesMVC.Controllers
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }));
+
+                foreach (var ticket in tickets)
+                {
+                    if (ticket.IdFlightSchedule != 0)
+                    {
+                        ticket.IdFlightScheduleNavigation = _context.Flightschedules
+                            .Include(fs => fs.IdFlightNavigation)
+                            .ThenInclude(f => f.IdOriginNavigation)
+                            .Include(fs => fs.IdFlightNavigation.IdDestinationNavigation)
+                            .Include(fs => fs.IdFlightNavigation.IdAircraftNavigation)
+                            .Include(fs => fs.IdFlightNavigation.IdClassNavigation)
+                            .FirstOrDefault(fs => fs.Id == ticket.IdFlightSchedule);
+                    }
+                }
 
                 return View(tickets);
             }
@@ -428,6 +446,119 @@ namespace BeaverEnterprisesMVC.Controllers
                 return StatusCode(500, "Ocorreu um erro interno ao processar a solicitação.");
             }
         }
+        public IActionResult SelectSeat(int passengerId, int ticketId)
+        {
+            // Log para depuração
+            System.Diagnostics.Debug.WriteLine($"Received: passengerId={passengerId}, ticketId={ticketId}");
 
+            var passengerCount = HttpContext.Session.GetInt32("PassengersCount") ?? 0;
+            var ticketsJson = HttpContext.Session.GetString("CartTickets");
+            var tickets = string.IsNullOrEmpty(ticketsJson)
+                ? new List<Ticket>()
+                : JsonConvert.DeserializeObject<List<Ticket>>(ticketsJson);
+
+            if (!tickets.Any() || passengerCount == 0)
+            {
+                return View(new List<Ticket>());
+            }
+
+            var ticket = tickets.FirstOrDefault(t => t.Id == ticketId && t.IdPassager == passengerId);
+            if (ticket == null)
+            {
+                return NotFound($"Bilhete ou passageiro não encontrado. ticketId: {ticketId}, passengerId: {passengerId}");
+            }
+
+            if (ticket.IdFlightSchedule != 0)
+            {
+                ticket.IdFlightScheduleNavigation = _context.Flightschedules
+                    .Include(fs => fs.IdFlightNavigation)
+                    .ThenInclude(f => f.IdOriginNavigation)
+                    .Include(fs => fs.IdFlightNavigation.IdDestinationNavigation)
+                    .Include(fs => fs.IdFlightNavigation.IdAircraftNavigation)
+                    .Include(fs => fs.IdFlightNavigation.IdClassNavigation)
+                    .FirstOrDefault(fs => fs.Id == ticket.IdFlightSchedule);
+            }
+
+            if (ticket.IdFlightScheduleNavigation == null)
+            {
+                return NotFound("Voo programado não encontrado.");
+            }
+
+            var capacity = ticket.IdFlightScheduleNavigation.IdFlightNavigation.IdAircraftNavigation.Capacity;
+            int seatsPerRow = 3;
+            int rows = (int)Math.Ceiling((double)capacity / seatsPerRow);
+
+            var occupiedSeatsInDb = _context.Tickets
+                .Where(t => t.IdFlightSchedule == ticket.IdFlightSchedule && t.SeatNumber.HasValue)
+                .Select(t => t.SeatNumber.Value)
+                .ToList();
+
+            var occupiedSeatsInCart = tickets
+                .Where(t => t.IdFlightSchedule == ticket.IdFlightSchedule && t.SeatNumber.HasValue)
+                .Select(t => t.SeatNumber.Value)
+                .ToList();
+
+            var occupiedSeats = occupiedSeatsInDb.Union(occupiedSeatsInCart).ToList();
+
+            ViewBag.PassengerId = passengerId;
+            ViewBag.TicketId = ticketId;
+            ViewBag.Rows = rows;
+            ViewBag.SeatsPerRow = seatsPerRow;
+            ViewBag.OccupiedSeats = occupiedSeats;
+            ViewBag.TicketType = ticket.Type;
+
+            return View(tickets);
+        }
+
+        [HttpPost]
+        public IActionResult SetSeat(int ticketId, int seatNumber)
+        {
+            System.Diagnostics.Debug.WriteLine($"SetSeat Received: ticketId={ticketId}, seatNumber={seatNumber}");
+
+            var ticketsJson = HttpContext.Session.GetString("CartTickets");
+            var tickets = string.IsNullOrEmpty(ticketsJson)
+                ? new List<Ticket>()
+                : JsonConvert.DeserializeObject<List<Ticket>>(ticketsJson);
+
+            var ticket = tickets.FirstOrDefault(t => t.Id == ticketId);
+            if (ticket == null)
+            {
+                TempData["Error"] = "Bilhete não encontrado.";
+                return RedirectToAction("SelectSeat", new { ticketId });
+            }
+
+            var occupiedSeatsInCart = tickets
+                .Where(t => t.IdFlightSchedule == ticket.IdFlightSchedule && t.SeatNumber.HasValue && t.Id != ticketId)
+                .Select(t => t.SeatNumber.Value)
+                .ToList();
+
+            var occupiedSeatsInDb = _context.Tickets
+                .Where(t => t.IdFlightSchedule == ticket.IdFlightSchedule && t.SeatNumber.HasValue)
+                .Select(t => t.SeatNumber.Value)
+                .ToList();
+
+            var allOccupiedSeats = occupiedSeatsInDb.Union(occupiedSeatsInCart).ToList();
+
+            if (allOccupiedSeats.Contains(seatNumber))
+            {
+                TempData["Error"] = "O assento selecionado já está ocupado.";
+                return RedirectToAction("SelectSeat", new { passengerId = ticket.IdPassager, ticketId });
+            }
+
+            // Atribuir o assento ao bilhete
+            ticket.SeatNumber = seatNumber;
+            HttpContext.Session.SetString("CartTickets", JsonConvert.SerializeObject(tickets));
+
+            // Verificar se existe um bilhete de volta para o mesmo passageiro
+            var returnTicket = tickets.FirstOrDefault(t => t.IdPassager == ticket.IdPassager && t.Type == "return" && t.Id != ticketId);
+            if (returnTicket != null && ticket.Type == "One-way")
+            {
+                TempData["Success"] = $"Assento {seatNumber} atribuído ao bilhete de ida. Agora selecione o assento de volta.";
+                return RedirectToAction("SelectSeat", new { passengerId = ticket.IdPassager, ticketId = returnTicket.Id });
+            }
+
+            TempData["Success"] = $"Assento {seatNumber} atribuído ao bilhete com sucesso!";
+            return RedirectToAction("Cart", "Home"); // Ou outra página final, como um resumo
+        }
     }
 }

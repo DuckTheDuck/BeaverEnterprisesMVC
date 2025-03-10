@@ -17,9 +17,11 @@ public partial class Ticket
 
     public string Status { get; set; } = null!;
 
+    public string? Type { get; set; }
+
     public virtual Flightschedule IdFlightScheduleNavigation { get; set; } = null!;
 
-    public virtual Passenger IdPassagerNavigation { get; set; } = null!;
+    public virtual Passenger? IdPassagerNavigation { get; set; }
 
     public virtual ICollection<Orderbuy> Orderbuys { get; set; } = new List<Orderbuy>();
 }

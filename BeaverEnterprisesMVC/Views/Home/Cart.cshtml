@@ -74,9 +74,10 @@
         .ticket-card {
             background: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             padding: 20px;
             margin-bottom: 20px;
+            margin: 20px;
         }
 
         .ticket-header {
@@ -120,8 +121,15 @@
             border: none;
             padding: 10px 20px;
             font-size: 1.1rem;
+            text-decoration: none;
             border-radius: 5px;
         }
+
+            .btn-primary-booking:disabled {
+                background-color: #cccccc;
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
 
         .btn-danger-booking {
             background-color: #dc3545;
@@ -142,6 +150,34 @@
             background-color: #f8f9fa;
             padding: 20px;
             margin-top: 40px;
+        }
+
+        .passenger-group {
+            border-width: 1px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+        }
+
+        .passenger {
+            background-color: rgb(130, 89, 46);
+            color: white;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .seats {
+            background-color: rgb(43, 124, 211);
+            color: white;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .btn-passenger-info:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -177,7 +213,8 @@
             @foreach (var group in groupedTickets)
             {
                 <div class="passenger-group">
-                    <h4>Passenger Group (Temp ID: @group.Key)</h4>
+                    <!-- Se IdPassager < 0, exibe "Unnamed Passenger", caso contrário exibe o IdPassager -->
+                    <h4>Passenger Group: @(group.First().IdPassager < 0 ? "Unnamed Passenger" : group.First().IdPassager.ToString())</h4>
 
                     @foreach (var ticket in group)
                     {
@@ -221,9 +258,9 @@
                                 <!-- Ticket Information -->
                                 <div class="mt-3">
                                     <h6>Ticket ID: @ticket.Id (Temporary)</h6>
-                                    <p>Seat Number: @ticket.SeatNumber</p>
+                                    <p>Seat Number: @(ticket.SeatNumber.HasValue ? ticket.SeatNumber.Value.ToString() : "Not Selected")</p>
                                     <p>Status: @ticket.Status</p>
-                                    <p>Type: @(ticket.IdFlightScheduleNavigation?.IdFlightNavigation?.IdOriginNavigation.Name == flight.IdOriginNavigation.Name ? "Departure" : "Arrival")</p>
+                                    <p>Type: @ticket.Type</p>
                                 </div>
                             </div>
                         }
@@ -234,19 +271,42 @@
                             </div>
                         }
                     }
-
-                    <!-- Button to Add Passenger Information -->
                     <div class="mt-3 text-end">
-                        <button class="btn-passenger-info" onclick="addPassengerInfo(@group.Key)">Add Passenger Info</button>
+                        @{
+                            // Mantém a lógica do botão como estava (desativado se IdPassager < 0)
+                            var hasPassenger = group.First().IdPassager >= 0;
+                        }
+                        <button class="btn-passenger-info seats"
+                        @(hasPassenger ? "" : "disabled")
+                                onclick="addSeat(@group.First().IdPassager, @group.First().Id)">
+                            Select the seat
+                        </button>
+                        <button class="btn-passenger-info passenger"
+                                onclick="addPassengerInfo(@group.Key)">
+                            Add Passenger Info
+                        </button>
                     </div>
                 </div>
             }
 
             <!-- Total Price and Proceed -->
             <div class="text-end mt-4">
+                @{
+                    // Verifica se todos os bilhetes têm assento selecionado (SeatNumber não é null)
+                    var allSeatsSelected = Model.All(ticket => ticket.SeatNumber.HasValue);
+                }
                 <h3 class="total-price">Total Price: €@totalPrice</h3>
                 <p>Includes taxes, fees, and surcharges</p>
-                <a href="@Url.Action("PassengerInformation", "Home")" class="btn-primary-booking">Proceed to Checkout</a>
+                <button class="btn-primary-booking"
+                        data-all-seats-selected="@allSeatsSelected.ToString().ToLower()"
+                @(allSeatsSelected ? "" : "disabled")
+                        onclick="proceedToCheckout(this)">
+                    Proceed to Checkout
+                </button>
+                @if (!allSeatsSelected)
+                {
+                    <p class="text-danger mt-2">Please select seats for all tickets before proceeding to checkout.</p>
+                }
             </div>
         }
     </div>
@@ -259,31 +319,22 @@
     <script>
         function addPassengerInfo(passengerId) {
             if (confirm("Do you want to add passenger information for this group?")) {
-                // Redirect to PassengerInformation with the temporary passenger ID
                 window.location.href = `@Url.Action("PassengerInformation", "Home")?passengerId=${passengerId}`;
             }
         }
 
-        function removeTicket(index) {
-            if (confirm("Are you sure you want to remove this ticket from your cart?")) {
-                fetch('/Home/RemoveTicketFromCart', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index: index })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Ticket removed from cart.");
-                        window.location.reload();
-                    } else {
-                        alert("Error removing ticket: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("An error occurred while removing the ticket.");
-                });
+        function addSeat(passengerId, ticketId) {
+            if (confirm("Do you want to select a seat?")) {
+                window.location.href = `@Url.Action("SelectSeat", "Home")?passengerId=${passengerId}&ticketId=${ticketId}`;
+            }
+        }
+
+        function proceedToCheckout(button) {
+            const allSeatsSelected = button.getAttribute('data-all-seats-selected') === 'true';
+            if (allSeatsSelected) {
+                window.location.href = '@Url.Action("Checkout", "Home")';
+            } else {
+                alert("Please select seats for all tickets before proceeding to checkout.");
             }
         }
     </script>

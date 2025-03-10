@@ -347,6 +347,10 @@ public partial class BeaverEnterprisesContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("STATUS");
+            entity.Property(e => e.Type)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("TYPE");
 
             entity.HasOne(d => d.IdFlightScheduleNavigation).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.IdFlightSchedule)
@@ -354,7 +358,6 @@ public partial class BeaverEnterprisesContext : DbContext
 
             entity.HasOne(d => d.IdPassagerNavigation).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.IdPassager)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TICKET_PASSENGER");
         });
 
