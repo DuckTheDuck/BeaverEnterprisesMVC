@@ -1,0 +1,369 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Airline Company</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Adicionando Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Payment Section (displayed first) -->
+    <div class="payment-container" id="payment-section">
+        <div class="payment-method">
+            <h2>Payment method information</h2>
+            <p class="free-charge">Credit / Debit Card <span>Free of charge</span></p>
+            <p class="accepted">We accept:</p>
+            <div class="card-icons">
+                <img src="https://cdn-icons-png.flaticon.com/512/349/349221.png" alt="Visa" class="card-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/179/179431.png" alt="Mastercard" class="card-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/217/217431.png" alt="Amex" class="card-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/349/349222.png" alt="Discover" class="card-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/217/217428.png" alt="JCB" class="card-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/217/217426.png" alt="UnionPay" class="card-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="UATP" class="card-icon">
+            </div>
+            <label>Card number <span class="required">*</span></label>
+            <input type="text" id="cardNumber" placeholder="">
+
+            <label>Cardholder's full name <span class="required">*</span></label>
+            <input type="text" id="cardholderName" placeholder="As it appears on the credit card">
+
+            <div class="expiry">
+                <div>
+                    <label>Month <span class="required">*</span></label>
+                    <input type="text" id="expiryMonth" placeholder="Expiry date - format mm/yy">
+                </div>
+                <div>
+                    <label>Year <span class="required">*</span></label>
+                    <input type="text" id="expiryYear" placeholder="">
+                </div>
+            </div>
+
+            <label>Security Code <span class="required">*</span></label>
+            <input type="text" id="securityCode" placeholder="">
+        </div>
+
+        <div class="billing-address">
+            <h2>Billing Address</h2>
+            <label>Number and street name <span class="required">*</span></label>
+            <input type="text" id="streetName" placeholder="">
+
+            <label>Apartment, building, floor, etc.</label>
+            <input type="text" id="apartment" placeholder="optional">
+
+            <label>Postcode / Zip <span class="required">*</span></label>
+            <input type="text" id="postcode" placeholder="">
+
+            <label>City <span class="required">*</span></label>
+            <input type="text" id="city" placeholder="">
+
+            <label>Country <span class="required">*</span></label>
+            <select id="country">
+                <option value="">Select a country</option>
+                <option value="US">United States</option>
+                <option value="UK">United Kingdom</option>
+                <option value="BR">Brazil</option>
+                <option value="PT">Portugal</option>
+            </select>
+        </div>
+        <div class="buttons">
+            <button class="back-btn" onclick="goBack()">Back</button>
+            <button class="pay-btn" onclick="validateAndShowTerms()">Pay Now</button>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Section (initially hidden) -->
+    <div class="terms-container" id="terms-section" style="display: none;">
+        <h2><i class="fas fa-file-alt"></i> Terms and Conditions</h2>
+        <div class="terms-box">
+            <label class="terms-label">
+                <input type="checkbox" id="termsCheckbox">
+                <span>I have read and accepted the <a href="#">General Terms and Conditions of Carriage</a>, the <a href="#">provisions on air carrier liability in the event of accidents</a>, the <a href="#">seat reservation product terms</a>, the <a href="#">additional baggage product terms</a>, the <a href="#">upgrade at a fixed price product terms</a>, the <a href="#">information regarding dangerous/forbidden goods</a>, and the <a href="#">privacy policy</a>.</span>
+            </label>
+        </div>
+        <div class="price-section">
+            <p class="price-details">Round trip price for all passengers (incl. taxes, fees, and surcharges). <a href="#">Show price details</a></p>
+            <p class="links"><a href="#">Review conditions</a> | <a href="#">Detailed baggage policy</a></p>
+        </div>
+        <div class="buttons">
+            <button class="back-btn" onclick="goBackToPayment()">Back</button>
+            <button class="pay-btn" onclick="confirmPayment()">Confirm payment</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<script>
+                function validateAndShowTerms() {
+            const cardNumber = document.getElementById('cardNumber').value;
+            const cardholderName = document.getElementById('cardholderName').value;
+            const expiryMonth = document.getElementById('expiryMonth').value;
+            const expiryYear = document.getElementById('expiryYear').value;
+            const securityCode = document.getElementById('securityCode').value;
+            const streetName = document.getElementById('streetName').value;
+            const postcode = document.getElementById('postcode').value;
+            const city = document.getElementById('city').value;
+            const country = document.getElementById('country').value;
+
+            if (!cardNumber || !cardholderName || !expiryMonth || !expiryYear || !securityCode || !streetName || !postcode || !city || !country) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (!/^\d{12,19}$/.test(cardNumber)) {
+                alert('Card number must be between 12 and 19 digits.');
+                return;
+            }
+
+            if (!/^\d{3,4}$/.test(securityCode)) {
+                alert('Security code must be 3 or 4 digits.');
+                return;
+            }
+
+            if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryMonth) || !/^\d{2}$/.test(expiryYear)) {
+                alert('Expiry date must be in MM/YY format (e.g., 12/25).');
+                return;
+            }
+
+            document.getElementById('payment-section').style.display = 'none';
+            document.getElementById('terms-section').style.display = 'block';
+        }
+
+                function confirmPayment() {
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        if (!termsCheckbox.checked) {
+            alert('Please accept the terms and conditions.');
+            return;
+        }
+
+        fetch('/Home/ProcessCheckout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Checkout completed successfully!');
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl; // Redireciona para a página inicial
+                }
+            } else {
+                alert('Checkout failed: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during checkout.');
+        });
+    }
+
+        function goBackToPayment() {
+            document.getElementById('terms-section').style.display = 'none';
+            document.getElementById('payment-section').style.display = 'block';
+        }
+
+        function goBack() {
+            alert('Going back to the previous page...');
+        }
+</script>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .payment-container, .terms-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: #4A2C2A; /* Castanho escuro */
+        font-size: 24px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        h2 i {
+            font-size: 20px;
+        }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #333;
+    }
+
+        label .required {
+            color: red;
+            font-weight: bold;
+        }
+
+    input, select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: #f7f7f7;
+        transition: border-color 0.3s;
+    }
+
+        input:focus, select:focus {
+            border-color: #8B5A2B; /* Castanho médio */
+            outline: none;
+        }
+
+    .expiry {
+        display: flex;
+        gap: 15px;
+    }
+
+        .expiry div {
+            flex: 1;
+        }
+
+    .free-charge {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+        .free-charge span {
+            color: #8B5A2B; /* Castanho médio */
+            font-weight: bold;
+        }
+
+    .accepted {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .card-icons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-icon {
+        height: 35px;
+        object-fit: contain;
+        transition: transform 0.3s;
+    }
+
+        .card-icon:hover {
+            transform: scale(1.1);
+        }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .back-btn, .pay-btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .back-btn {
+        background-color: white;
+        border: 1px solid #4A2C2A; /* Castanho escuro */
+        color: #4A2C2A;
+    }
+
+        .back-btn:hover {
+            background-color: #f0e6d6;
+            transform: translateY(-2px);
+        }
+
+    .pay-btn {
+        background-color: #8B5A2B; /* Castanho médio */
+        color: white;
+    }
+
+        .pay-btn:hover {
+            background-color: #6F4E37; /* Castanho mais escuro */
+            transform: translateY(-2px);
+        }
+
+    .terms-container {
+        text-align: left;
+    }
+
+    .terms-box {
+        background-color: #f9f5f0; /* Fundo bege claro */
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #8B5A2B; /* Borda castanha */
+        margin-bottom: 20px;
+    }
+
+    .terms-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+    }
+
+        .terms-label input {
+            margin-top: 3px;
+        }
+
+    .price-section {
+        text-align: right;
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f9f5f0;
+        border-radius: 8px;
+    }
+
+    .total-price {
+        font-size: 20px;
+        font-weight: bold;
+        color: #4A2C2A; /* Castanho escuro */
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .price-details, .links {
+        font-size: 12px;
+        color: #666;
+    }
+
+    a {
+        color: #8B5A2B; /* Castanho médio */
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: underline;
+            color: #6F4E37; /* Castanho mais escuro */
+        }
+</style>

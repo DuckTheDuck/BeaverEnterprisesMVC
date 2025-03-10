@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive Login and Signup Form</title>
+
     <!-- CSS -->
     <link rel="stylesheet" href="~/css/site.css">
-    <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,12 +15,11 @@
     <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
-    <!-- jQuery (Necessário para Toastr) -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 </head>
 <body>
 
@@ -30,8 +29,7 @@
             <div class="navbarcustom">
                 <a href="#" class="airline">Airline</a>
                 <div class="leftnavbarcustom">
-                    <a href="@Url.Action("ClearSession", "Home")" class="navitem">Logout</a>
-                    <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                    
                     <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
                     <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
                     <div class="navitem"><a href="#">Contact</a></div>
@@ -39,56 +37,43 @@
             </div>
         </div>
 
-
-        <div class="Login-mid-button">
-            <a href="#" class="cta-button active" onclick="changeViewLoginRegister(event, '_Login')">Login</a>
-            <a href="#" class="cta-button" onclick="changeViewLoginRegister(event, '_Register')">Register</a>
+        <!-- User Profile -->
+        <div style="margin-top: 20px;">
+            <div class="centered-form-Gabriel-Login">
+                <div class="form-Gabriel-Login login-Gabriel-Login">
+                    <div class="form-content-Gabriel-Login">
+                        <h2>User Profile</h2>
+                        <label for="first-name" class="form-label">Email: </label>
+                        <span>@ViewBag.User.Email</span>
+                        <br />
+                        <label for="first-name" class="form-label">Code:  </label>
+                        <span>@ViewBag.User.Code</span>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Área onde a view será alterada -->
-        <div id="shared-view">
-        </div>
-
     </div>
 
     <!-- Signup Form -->
     @await Html.PartialAsync("_Footer")
 
-    <script>
-        $(document).ready(function () {
-            var ErrorMessagePass = '@TempData["ErrorMessagePassWord"]';
-            var ErrorMessageEmail = '@TempData["ErrorMessageEmail"]';
-            var ErrorMessageLogin = '@TempData["ErrorMessageLogin"]';
-
-            if (ErrorMessagePass) {
-                toastr.error(ErrorMessagePass, "Erro");
-            }
-
-            if (ErrorMessageEmail) {
-                toastr.error(ErrorMessageEmail, "Erro");
-            }
-
-            if (ErrorMessageLogin) {
-                toastr.error(ErrorMessageLogin, "Erro");
-            }
-        });
-    </script>
-
-
     <!-- JavaScript -->
     <script src="~/js/site.js"></script>
+
+   
+
     <style>
         .herov3 {
             background: url('https://source.unsplash.com/1600x900/?airplane,airport') center/cover;
             display: flex;
-            align-items: flex-end; /* Alinha o conteúdo da hero ao fundo */
+            align-items: flex-end;
             justify-content: center;
             text-align: center;
             color: rgb(130, 89, 46);
-            position: absolute; /* Faz com que a hero se posicione dentro da .image */
-            bottom: 0; /* Posiciona a hero na parte inferior da .image */
-            width: 100%; /* Garante que a hero ocupe toda a largura da imagem */
-            margin-bottom: 50px; /* Garante que a hero ocupe toda a largura da imagem */ /* Remove o margin-bottom, pois a hero já está posicionada */
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            margin-bottom: 50px;
         }
 
         .image-Gabriel-Register {
@@ -102,7 +87,7 @@
             position: relative;
             height: 600px;
         }
-
     </style>
+
 </body>
 </html>

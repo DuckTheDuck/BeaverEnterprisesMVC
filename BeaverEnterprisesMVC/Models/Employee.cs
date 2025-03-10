@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace BeaverEnterprisesMVC.Models;
 
+//Gabriel
 public partial class Employee
 {
     public int Id { get; set; }

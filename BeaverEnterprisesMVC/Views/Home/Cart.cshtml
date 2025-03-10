@@ -185,11 +185,11 @@
     <!-- Navbar -->
     <div class="centerBookingHead">
         <div class="navbarcustom">
-            <a href="@Url.Action("Index", "Home")" class="airline-do-Simao">Airline</a>
+            <a href="@Url.Action("Index", "Home")" class="airline">Airline</a>
             <div class="leftnavbarcustom">
-                <div class="navitem"><a href="@Url.Action("Regsister", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
-                <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
-                <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
+                <a href="@Url.Action("ClearSession", "Home")" class="navitem">Logout</a>
+                <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
+                <div class="navitem"><a href="@Url.Action("Cart", "Home")">Cart</a></div>
                 <div class="navitem"><a href="#">Contact</a></div>
             </div>
         </div>
@@ -202,7 +202,7 @@
         @if (!Model.Any())
         {
             <div class="alert alert-info" role="alert">
-                Your cart is empty. <a href="@Url.Action("BookingAvailability", "Home")" class="alert-link">Book a flight now!</a>
+                Your cart is empty. <a href="@Url.Action("Index", "Home")" class="alert-link">Book a flight now!</a>
             </div>
         }
         else

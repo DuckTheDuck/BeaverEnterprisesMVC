@@ -63,12 +63,40 @@ namespace BeaverEnterprisesMVC.Controllers
             ModelState.Remove("IdEmployeeNavigation");
             ModelState.Remove("IdFlightNavigation");
 
+
+            var newFlight = await _context.Flights.FindAsync(function.IdFlight);
+    if (newFlight == null)
+    {
+        ModelState.AddModelError("", "The flight doesnt exist.");
+    }
+    else
+    {
+        var employeeFlights = _context.Functions
+            .Where(f => f.IdEmployee == function.IdEmployee)
+            .Select(f => f.IdFlight)
+            .ToList();
+
+        var overlappingFlights = _context.Flights
+            .Where(f => employeeFlights.Contains(f.Id) &&
+                        f.StartDate.Value.Date == newFlight.StartDate.Value.Date) 
+            .ToList();
+
+        if (overlappingFlights.Any())
+        {
+            ModelState.AddModelError("", "This employee is already scheduled for a flight on this day.");
+        }
+    }
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(function);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            
+            
+            
             ViewData["IdEmployee"] = new SelectList(_context.Employees, "Id", "Id", function.IdEmployee);
             ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", function.IdFlight);
             return View(function);
@@ -107,16 +135,40 @@ namespace BeaverEnterprisesMVC.Controllers
             ModelState.Remove("IdEmployeeNavigation");
             ModelState.Remove("IdFlightNavigation");
 
+            // Buscar o voo atualizado
+            var newFlight = await _context.Flights.FindAsync(function.IdFlight);
+            if (newFlight == null)
+            {
+                ModelState.AddModelError("", "The flight doesnt exist.");
+            }
+            else
+            {
+                var overlappingFlights = _context.Functions
+                    .Where(f => f.IdEmployee == function.IdEmployee && f.Id != function.Id) 
+                    .Join(_context.Flights,
+                        func => func.IdFlight,
+                        flight => flight.Id,
+                        (func, flight) => flight)
+                    .Where(f => f.StartDate.Value.Date == newFlight.StartDate.Value.Date) 
+                    .ToList();
+
+                if (overlappingFlights.Any())
+                {
+                    ModelState.AddModelError("", "This employee is already scheduled for a flight on this day.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(function);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FunctionExists(function.Id))
+                    if (!_context.Functions.Any(e => e.Id == function.Id))
                     {
                         return NotFound();
                     }
@@ -125,12 +177,13 @@ namespace BeaverEnterprisesMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["IdEmployee"] = new SelectList(_context.Employees, "Id", "Id", function.IdEmployee);
-            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "Id", function.IdFlight);
+
+            ViewData["IdEmployee"] = new SelectList(_context.Employees, "Id", "Name", function.IdEmployee);
+            ViewData["IdFlight"] = new SelectList(_context.Flights, "Id", "FlightNumber", function.IdFlight);
             return View(function);
         }
+
 
         // GET: Functions/Delete/5
         public async Task<IActionResult> Delete(int? id)
