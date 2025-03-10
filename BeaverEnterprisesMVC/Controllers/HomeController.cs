@@ -92,6 +92,20 @@ namespace BeaverEnterprisesMVC.Controllers
             return View();
         }
 
+        public IActionResult Profile()
+        {
+            var currentUserId = HttpContext.Session.GetInt32("CurrentUserID");
+
+            var user = _context.Accounts.FirstOrDefault(u => u.Id == currentUserId);
+         
+            ViewBag.User = user;
+
+            return View();
+        }
+
+      
+          
+
         public IActionResult BookingAvailability()
         {
 
@@ -101,6 +115,14 @@ namespace BeaverEnterprisesMVC.Controllers
         {
             return View();
         }
+
+        public IActionResult ClearSession()
+        {
+            HttpContext.Session.Remove("CurrentUserID");
+            TempData["Logout"] = "LoggedOut";
+            return RedirectToAction("Index");  // Ou qualquer outra ação desejada após limpar a sessão
+        }
+
 
         [HttpGet]
         public IActionResult Cart()
@@ -316,6 +338,12 @@ namespace BeaverEnterprisesMVC.Controllers
         }
         public IActionResult Register()
         {
+
+            if (HttpContext.Session.GetInt32("CurrentUserID") != null)
+            {
+               return RedirectToAction("Profile", "Home");
+            }
+            
             return View();
         }
         public IActionResult GetPartialView(string viewName)
@@ -342,7 +370,8 @@ namespace BeaverEnterprisesMVC.Controllers
 
             var user = _context.Accounts.FirstOrDefault(u => u.Email == email && u.Password == passHash);
             if (user != null)
-            {
+            {           
+                TempData["Logged"] = "Logged with: " + email;
                 HttpContext.Session.SetInt32("CurrentUserID", user.Id);
                 return RedirectToAction("Index", "Home");
             }
@@ -350,6 +379,9 @@ namespace BeaverEnterprisesMVC.Controllers
             TempData["ErrorMessageLogin"] = "Invalid username or password!";
             return View("Register", "Home");
         }
+
+       
+
 
         [HttpPost]
         public async Task<IActionResult> BookingAvailability(string Origin, string Destination, string Departure, string Arrival, int Passengers)
@@ -504,6 +536,9 @@ namespace BeaverEnterprisesMVC.Controllers
             _logger.LogInformation("Accessing Checkout GET...");
             return View();
         }
+
+       
+
 
         [HttpPost]
         public async Task<IActionResult> ProcessCheckout()

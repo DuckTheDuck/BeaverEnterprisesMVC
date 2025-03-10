@@ -28,6 +28,7 @@
             <div class="navbarcustom">
                 <a href="#" class="airline">Airline</a>
                 <div class="leftnavbarcustom">
+                    <a href="@Url.Action("ClearSession", "Home")" class="navitem">Logout</a>
                     <div class="navitem"><a href="@Url.Action("Register", "Home")"><i class="fas fa-user-circle"></i> Login & Registration</a></div>
                     <div class="navitem"><a href="@Url.Action("BookingAvailability", "Home")">Book</a></div>
                     <div class="navitem"><a href="@Url.Action("CheckIn", "Home")">Check-In</a></div>
@@ -95,17 +96,15 @@
     <script>
         $(document).ready(function () {
             var Logged = '@TempData["Logged"]';
-            var ErrorMessageAccount = '@TempData["ErrorMessageAccount"]';
+             var Logout = '@TempData["Logout"]';
 
-            // Verifica se as mensagens não são nulas ou vazias
-            if (Logged && Logged !== "null" && Logged !== "") {
-                toastr.success(Logged, "Sucesso");
+            if (Logged) {
+                toastr.success(Logged, "Success");
             }
-
-            if (ErrorMessageAccount && ErrorMessageAccount !== "null" && ErrorMessageAccount !== "") {
-                toastr.error(ErrorMessageAccount, "Erro");
+             if (Logout) {
+                toastr.error(Logout, "LoggedOut");
             }
-        });
+                });
     </script>
 
 </body>
